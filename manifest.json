@@ -1,0 +1,22 @@
+{
+    "name": "Cross-Legged Routine",
+    "short_name": "HipFlex",
+    "description": "Your 8-week plan to improve cross-legged sitting.",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4CAF50",
+    "icons": [
+        {
+            "src": "icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+        // You might want more sizes for broader compatibility
+    ]
+}
