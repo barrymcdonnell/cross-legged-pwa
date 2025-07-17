@@ -8,7 +8,7 @@ body {
 }
 
 header {
-    background-color: #000080; /* Navy */
+    background-color: #4CAF50; /* Green */
     color: white;
     padding: 1em 0;
     text-align: center;
@@ -20,12 +20,47 @@ header {
 
 header h1 {
     margin-bottom: 5px;
-    color: white;
 }
 
 #date-display {
     font-size: 0.9em;
     margin-top: 5px;
+}
+
+/* NEW: Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: center;
+    background-color: #333; /* Darker background for navbar */
+    padding: 10px 0;
+    position: sticky;
+    top: 60px; /* Adjust based on header height */
+    z-index: 999;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+}
+
+.nav-tab {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin: 0 5px; /* Spacing between tabs */
+    border-radius: 5px;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.nav-tab:hover {
+    background-color: #555;
+}
+
+.nav-tab.active {
+    background-color: #4CAF50; /* Active tab color */
+    color: white;
+    font-weight: bold;
 }
 
 main {
@@ -34,7 +69,7 @@ main {
     margin: 20px auto;
 }
 
-.card { /* New styling for sections */
+.card { /* Styling for sections */
     background-color: #fff;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     border-radius: 8px;
@@ -53,7 +88,7 @@ h1, h2, h3, h4 {
     border-radius: 5px;
 }
 
-.week-section h3 { /* Changed from h2 to h3 for weekly titles inside .week-section */
+.week-section h3 {
     color: #2196F3; /* Blue */
 }
 
@@ -75,7 +110,7 @@ summary {
     color: #555;
 }
 
-/* NEW: Daily Routine Styling */
+/* Daily Routine Styling */
 #daily-routine-section {
     padding: 30px;
 }
@@ -121,7 +156,7 @@ summary {
     accent-color: #4CAF50; /* Style checkbox color */
 }
 
-/* NEW: Progress Bar Styling */
+/* Progress Bar Styling */
 #daily-progress-bar-container {
     width: 100%;
     background-color: #e0e0e0;
@@ -149,7 +184,7 @@ summary {
     color: #555;
 }
 
-/* NEW: Weekly Summary Styling */
+/* Weekly Summary Styling */
 #weekly-summary-section {
     padding: 30px;
     text-align: center;
@@ -188,8 +223,36 @@ summary {
     background-color: #d32f2f;
 }
 
+/* NEW: Weekly Schedule Styling */
+#weekly-schedule-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#weekly-schedule-section li {
+    background-color: #f0f8ff; /* Lighter blue */
+    margin-bottom: 10px;
+    padding: 12px 15px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+#weekly-schedule-section h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #1976D2; /* Darker blue */
+}
+
 /* Responsive design for smaller screens */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column; /* Stack tabs vertically */
+        align-items: center;
+    }
+    .nav-tab {
+        width: 90%;
+        margin-bottom: 5px;
+    }
     main {
         margin: 10px;
         padding: 15px;
