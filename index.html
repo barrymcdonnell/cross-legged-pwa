@@ -6,21 +6,14 @@
     <title>Cross-Legged Sitting Routine</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4CAF50"/>
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <meta name="theme-color" content="#000080"/> <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <header>
         <h1>8-Week Cross-Legged Sitting Routine</h1>
         <div id="date-display"></div>
     </header>
-
-    <nav class="navbar">
-        <button class="nav-tab active" data-target="daily-routine-section">Today's Routine</button>
-        <button class="nav-tab" data-target="weekly-schedule-section">Weekly Schedule</button>
-        <button class="nav-tab" data-target="full-routine-details">Full Routine Details</button>
-        <button class="nav-tab" data-target="weekly-summary-section">Weekly Summary</button>
-    </nav>
 
     <main>
         <section id="daily-routine-section" class="card tab-content active">
@@ -53,7 +46,6 @@
                 <button id="reset-week-button" style="display: none;">Reset All Progress</button>
             </div>
         </section>
-
 
         <section id="full-routine-details" class="card tab-content" style="display: none;">
             <h2>Full 8-Week Routine Details</h2>
@@ -145,6 +137,25 @@
             </section>
         </section>
     </main>
+
+    <nav class="navbar">
+        <button class="nav-tab active" data-target="daily-routine-section">
+            <i class="fas fa-calendar-day"></i>
+            <span>Today</span>
+        </button>
+        <button class="nav-tab" data-target="weekly-schedule-section">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Schedule</span>
+        </button>
+        <button class="nav-tab" data-target="full-routine-details">
+            <i class="fas fa-list-ul"></i>
+            <span>Full Routine</span>
+        </button>
+        <button class="nav-tab" data-target="weekly-summary-section">
+            <i class="fas fa-chart-line"></i>
+            <span>Summary</span>
+        </button>
+    </nav>
 
     <script src="app.js"></script>
 </body>
