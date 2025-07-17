@@ -146,77 +146,53 @@ const weekScheduleContent = document.getElementById('week-schedule-content'); //
  * @returns {object} { week: number, dayOfWeek: number (0=Mon, 6=Sun), totalWeeks: number, isRoutineFinished: boolean }
  */
 function getCurrentRoutineProgress() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Normalize to start of day
-
-    let startDateISO = localStorage.getItem('routineStartDate');
-    let startDate;
-
-    if (!startDateISO) {
-        // If no start date, set it to today and initialize weekly progress
-        startDate = today;
-        localStorage.setItem('routineStartDate', startDate.toISOString());
-        initializeWeeklyProgress();
-    } else {
-        startDate = new Date(startDateISO);
-        // Validate if startDate parsed correctly. If not, reset it.
-        if (isNaN(startDate.getTime())) { // Check if date is "Invalid Date"
-            console.warn("Invalid routineStartDate found in localStorage, resetting.");
-            startDate = today;
-            localStorage.setItem('routineStartDate', startDate.toISOString());
-            initializeWeeklyProgress(); // Re-initialize weekly summary if startDate was invalid
-        }
-    }
-
-    const diffTime = Math.abs(today.getTime() - startDate.getTime()); // Use getTime() for reliable difference
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Use floor for full days passed
-
-    // Calculate current week (0-indexed)
-    const currentWeekIndex = Math.floor(diffDays / 7);
-    const currentDayOfWeek = (diffDays % 7); // 0 = Day 1 of the routine week, 6 = Day 7
-
-    // Ensure we don't go beyond the routine length
-    const totalWeeks = routine.length;
-    let isRoutineFinished = false;
-    let effectiveWeekIndex = currentWeekIndex;
-
-    if (currentWeekIndex >= totalWeeks) {
-        // Routine is complete, or we're past 8 weeks.
-        effectiveWeekIndex = totalWeeks - 1; // Stick to the last defined week's routine
-        isRoutineFinished = true;
-    }
+    const totalDaysElapsed = getDaysSinceProgramStart();
+    const currentWeekIndex = Math.floor(totalDaysElapsed / WEEK_LENGTH); // Assuming WEEK_LENGTH is 7
+    const currentDayInWeek = totalDaysElapsed % WEEK_LENGTH; // Day index within the current week (0-6)
 
     return {
-        week: effectiveWeekIndex,
-        dayOfWeek: currentDayOfWeek,
-        isRoutineFinished: isRoutineFinished,
-        totalWeeks: totalWeeks
+        week: currentWeekIndex,
+        day: currentDayInWeek, // This will be 0-indexed (Mon=0, Tue=1, etc. relative to program start day)
+        totalDaysElapsed: totalDaysElapsed
     };
 }
-
 
 /**
  * Loads exercises for the current day based on the routine.
  */
 function loadDailyRoutine() {
-    const { week, dayOfWeek, isRoutineFinished } = getCurrentRoutineProgress();
+    // 1. Get current routine progress only once
+    const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex, totalDaysElapsed } = getCurrentRoutineProgress();
     const today = new Date();
+    const todayKey = today.toISOString().split('T')[0]; // YYYY-MM-DD for progress tracking
 
+    // Get DOM elements (assuming these are defined globally or passed in)
+    // Please ensure 'dateDisplay', 'currentWeekDisplay', 'currentDayOfWeekDisplay',
+    // 'exerciseList', 'dailyProgressContainer', 'dailyProgressBarContainer'
+    // are correctly linked to your HTML elements.
+    const dateDisplay = document.getElementById('date-display');
+    const currentWeekDisplay = document.getElementById('current-week-display'); // Assuming this is for "Week X"
+    const currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display'); // Assuming this is for "Day Y"
+    const exerciseList = document.getElementById('exercise-list'); // This should be the main container for exercises
+    const dailyProgressContainer = document.getElementById('daily-progress-container'); // The whole container for progress bar/text
+    const dailyProgressBarContainer = document.getElementById('daily-progress-bar-container'); // Just the bar container
+
+    // 2. Update date and week/day displays
     dateDisplay.textContent = today.toLocaleDateString('en-IE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    currentWeekDisplay.textContent = `Week ${currentRoutineWeekIndex + 1}`;
+    currentDayOfWeekDisplay.textContent = `${totalDaysElapsed + 1}`; // Display sequential day
 
-    currentWeekDisplay.textContent = `Week ${week + 1}`;
-    currentDayOfWeekDisplay.textContent = `${dayOfWeek + 1}`;
+    // Get the routine for the current week and day
+    const currentWeekRoutine = routine[currentRoutineWeekIndex];
+    let dailyExercises = (currentWeekRoutine && currentWeekRoutine.days) ? currentWeekRoutine.days[currentDayInWeekIndex] : null;
 
+    // 3. Clear existing exercise list
+    exerciseList.innerHTML = '';
 
-    const weekRoutine = routine[week];
-    let dailyExercises = (weekRoutine && weekRoutine.days) ? weekRoutine.days[dayOfWeek] : null;
-
-    exerciseListDiv.innerHTML = ''; // Clear previous exercises
-
+    // 4. Check if there are exercises for today
     if (dailyExercises && dailyExercises.length > 0) {
         const ul = document.createElement('ul');
-        const todayKey = today.toISOString().split('T')[0]; // YYYY-MM-DD
-        const dailyProgress = getDailyProgress(todayKey);
+        const dailyProgress = getDailyProgress(todayKey); // Ensure getDailyProgress exists and works
 
         dailyExercises.forEach(exerciseName => {
             const li = document.createElement('li');
@@ -228,7 +204,8 @@ function loadDailyRoutine() {
 
             const label = document.createElement('label');
             label.htmlFor = checkbox.id;
-            label.innerHTML = `<strong>${exerciseName}</strong><br><small>${exercises[exerciseName]}</small>`;
+            // Assuming 'exercises' is a global object mapping names to descriptions
+            label.innerHTML = `<strong>${exerciseName}</strong><br><small>${exercises[exerciseName] || 'Description not available'}</small>`;
 
             if (checkbox.checked) {
                 li.classList.add('completed');
@@ -239,23 +216,24 @@ function loadDailyRoutine() {
             ul.appendChild(li);
 
             checkbox.addEventListener('change', (event) => {
-                toggleExerciseComplete(exerciseName, event.target.checked);
+                toggleExerciseComplete(exerciseName, event.target.checked); // Ensure toggleExerciseComplete exists
                 li.classList.toggle('completed', event.target.checked);
-                updateDailyProgressBar();
+                updateDailyProgressBar(); // Ensure updateDailyProgressBar exists
             });
         });
-        exerciseListDiv.appendChild(ul);
+        exerciseList.appendChild(ul);
 
         // Show progress bar and text if exercises are scheduled
-        dailyProgressBarContainer.style.display = 'block';
+        dailyProgressContainer.style.display = 'block'; // Make sure this is the correct ID for the entire container
 
     } else {
-        exerciseListDiv.innerHTML = '<p>No specific exercises planned for today. Enjoy your rest or free practice!</p>';
-        // Hide progress bar and text if no exercises are scheduled
-        dailyProgressBarContainer.style.display = 'none';
+        // No exercises planned for today
+        exerciseList.innerHTML = '<p>No exercises planned for today. Enjoy your rest day!</p>';
+        dailyProgressContainer.style.display = 'none'; // Hide progress bar and text
     }
 
-    updateDailyProgressBar(); // Initial update
+    // 5. Always update progress bar and summary, and load schedule
+    updateDailyProgressBar(); // Initial update (will handle hidden state if no exercises)
     updateWeeklySummary(); // Update summary on load
     loadWeeklySchedule(); // Load weekly schedule too
 }
@@ -378,10 +356,15 @@ function showNextWeek() {
 
 // Helper to get days since program start
 function getDaysSinceProgramStart() {
-    const now = new Date();
-    const diffTime = Math.abs(now - programStartDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
+    const today = new Date();
+    // Normalize dates to start of day to avoid time differences affecting calculation
+    const start = new Date(programStartDate.getFullYear(), programStartDate.getMonth(), programStartDate.getDate());
+    const current = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+    const diffTime = current - start; // Difference in milliseconds
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Convert to days
+
+    return diffDays; // 0 for the start day, 1 for the next day, etc.
 }
 
 // --- New function to display exercises for a specific day ---
