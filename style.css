@@ -101,6 +101,104 @@ main {
     margin-bottom: 20px; /* Adjust if needed to not touch the bottom navbar */
 }
 
+/* Schedule Navigation */
+.schedule-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.schedule-nav-btn {
+    background-color: #000080; /* DarkBlue */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+.schedule-nav-btn:hover {
+    background-color: #000060; /* Darker blue on hover */
+}
+
+#schedule-week-display {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+}
+
+
+/* Weekly Schedule Grid */
+#week-schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Responsive grid */
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.day-card {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.day-card:hover {
+    background-color: #e5e5e5;
+    border-color: #ccc;
+    transform: translateY(-2px);
+}
+
+.day-card h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: #555;
+    font-size: 1em;
+}
+
+.day-card .status {
+    font-size: 0.85em;
+    color: #777;
+    margin-top: 5px;
+}
+
+/* Specific day-card states */
+.day-card.current-day {
+    border-color: #FF5722; /* Orange for current day */
+    background-color: #fffaf0; /* Lighter orange background */
+    box-shadow: 0 4px 8px rgba(255, 87, 34, 0.2);
+}
+
+.day-card.scheduled {
+    background-color: #e0f2f7; /* Light blue for scheduled days */
+    border-color: #b3e5fc;
+}
+
+.day-card.completed {
+    background-color: #d4edda; /* Light green for completed */
+    border-color: #81c784;
+}
+
+.day-card .completed-icon {
+    color: #4CAF50; /* Green checkmark */
+    font-size: 1.5em;
+    margin-top: 10px;
+}
+
+/* Responsive adjustment for very small screens */
+@media (max-width: 480px) {
+    #week-schedule-grid {
+        grid-template-columns: 1fr; /* Stack days vertically on very small screens */
+    }
+}
+
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
     .navbar {
