@@ -11,6 +11,18 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+// Setting the start date
+// Assume you have some way to define your weekly schedule, e.g.:
+const programStartDate = new Date('2024-07-14'); // Adjust to your actual program start
+const WEEK_LENGTH = 7; // Days in a week
+const PROGRAM_WEEKS = 8; // Total weeks in the program
+
+// Define a default weekly routine pattern (0=Sun, 1=Mon, ..., 6=Sat)
+// Example: Monday, Wednesday, Friday, Saturday are routine days
+const DEFAULT_WEEKLY_ROUTINE_PATTERN = [1, 3, 5];
+
+let currentDisplayWeek = 0; // 0-indexed for program weeks
+
 // --- CORE APPLICATION LOGIC ---
 
 // Exercise Data - Define all exercises with their details
@@ -303,39 +315,68 @@ function updateDailyProgressBar() {
 
 // --- Weekly Schedule Logic (NEW) ---
 function loadWeeklySchedule() {
-    const { week: currentRoutineWeekIndex } = getCurrentRoutineProgress();
-    const currentWeekRoutine = routine[currentRoutineWeekIndex];
+    const weekScheduleGrid = document.getElementById('week-schedule-grid');
+    weekScheduleGrid.innerHTML = ''; // Clear previous content
 
-    weekScheduleContent.innerHTML = ''; // Clear previous schedule
+    const today = new Date();
+    const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday
 
-    if (!currentWeekRoutine || !currentWeekRoutine.days) {
-        weekScheduleContent.innerHTML = '<p>No routine defined for this week.</p>';
-        return;
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    document.getElementById('schedule-week-display').textContent = `Week ${currentDisplayWeek + 1}`;
+
+    for (let i = 0; i < WEEK_LENGTH; i++) {
+        const dayCard = document.createElement('div');
+        dayCard.classList.add('day-card');
+        dayCard.dataset.dayIndex = i; // Store day index
+
+        // Add 'current-day' class if it's today's day of the week
+        if (i === currentDayOfWeek && currentDisplayWeek === Math.floor(getDaysSinceProgramStart() / WEEK_LENGTH)) {
+            dayCard.classList.add('current-day');
+        }
+
+        // Add 'scheduled' class based on your pattern
+        if (DEFAULT_WEEKLY_ROUTINE_PATTERN.includes(i)) {
+            dayCard.classList.add('scheduled');
+            dayCard.innerHTML = `<h3>${dayNames[i]}</h3><p class="status">Routine Day</p>`;
+        } else {
+            dayCard.innerHTML = `<h3>${dayNames[i]}</h3><p class="status">Rest Day</p>`;
+        }
+
+        // Future: Add logic to check for 'completed' class based on saved progress
+
+        weekScheduleGrid.appendChild(dayCard);
     }
 
-    const ul = document.createElement('ul');
-    currentWeekRoutine.days.forEach((dayExercises, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `<h3>${dayNames[index]}</h3>`; // Use predefined day names
-
-        if (dayExercises && dayExercises.length > 0) {
-            const exerciseUl = document.createElement('ul');
-            exerciseUl.style.listStyleType = 'none'; // Remove bullets for nested list
-            exerciseUl.style.paddingLeft = '0'; // Remove padding for nested list
-            dayExercises.forEach(exerciseName => {
-                const exerciseLi = document.createElement('li');
-                exerciseLi.textContent = exerciseName;
-                exerciseUl.appendChild(exerciseLi);
-            });
-            li.appendChild(exerciseUl);
-        } else {
-            li.innerHTML += '<p>Rest Day / No Scheduled Exercises</p>';
-        }
-        ul.appendChild(li);
-    });
-    weekScheduleContent.appendChild(ul);
+    // Add event listeners for week navigation
+    document.getElementById('prev-week-btn').onclick = showPreviousWeek;
+    document.getElementById('next-week-btn').onclick = showNextWeek;
 }
 
+function showPreviousWeek() {
+    if (currentDisplayWeek > 0) {
+        currentDisplayWeek--;
+        loadWeeklySchedule();
+    }
+}
+
+function showNextWeek() {
+    if (currentDisplayWeek < PROGRAM_WEEKS - 1) {
+        currentDisplayWeek++;
+        loadWeeklySchedule();
+    }
+}
+
+// Helper to get days since program start
+function getDaysSinceProgramStart() {
+    const now = new Date();
+    const diffTime = Math.abs(now - programStartDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+}
+
+// You would call loadWeeklySchedule() when the schedule tab is opened
+// (This is already handled by the showTab() function)
 
 // --- Weekly Summary Logic ---
 
