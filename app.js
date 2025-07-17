@@ -13,7 +13,7 @@ if ('serviceWorker' in navigator) {
 
 // Setting the start date
 // Assume you have some way to define your weekly schedule, e.g.:
-const programStartDate = new Date('2024-07-14'); // Adjust to your actual program start
+const programStartDate = new Date('2025-07-14'); // Adjust to your actual program start
 const WEEK_LENGTH = 7; // Days in a week
 const PROGRAM_WEEKS = 8; // Total weeks in the program
 
