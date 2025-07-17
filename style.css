@@ -43,6 +43,7 @@ header h1 {
     z-index: 999;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.2); /* Shadow on top */
     flex-wrap: nowrap; /* Prevent wrapping for bottom navbar */
+    flex-direction: row;
 }
 
 .nav-tab {
@@ -101,6 +102,7 @@ main {
 @media (max-width: 768px) {
     .navbar {
         padding: 5px 0; /* Keep consistent padding */
+        flex-direction: row;
     }
     .nav-tab {
         padding: 6px 3px;
