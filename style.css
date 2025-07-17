@@ -35,7 +35,7 @@ header h1 {
     justify-content: space-around; /* Distribute items evenly */
     align-items: center;
     background-color: #333; /* Darker background for navbar */
-    padding: 5px 0; /* Reduced padding for compact look */
+    padding: 5px 2px; /* Reduced padding for compact look */
     position: fixed; /* Fixed position */
     bottom: 0; /* Stick to the bottom */
     left: 0;
