@@ -1,7 +1,7 @@
 // PWA Service Worker Registration (keep this from previous instructions)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
+        navigator.serviceWorker.register('/cross-legged-pwa/service-worker.js', { scope: '/cross-legged-pwa/' }) // ADJUST SCOPE HERE!
             .then(registration => {
                 console.log('ServiceWorker registration successful with scope: ', registration.scope);
             })
@@ -31,13 +31,13 @@ const exercises = {
 const routine = [
     // Week 1 (Overall Index 0) - Weeks 1-2
     {weekLabel: "Week 1", days: [
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 1 (e.g., Monday)
-        null, // Day 2
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 3
-        null, // Day 4
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 5
-        null, // Day 6
-        null  // Day 7
+        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 0 (Monday)
+        null, // Day 1
+        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 2
+        null, // Day 3
+        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 4
+        null, // Day 5
+        null  // Day 6
     ]},
     // Week 2 (Overall Index 1) - Weeks 1-2
     {weekLabel: "Week 2", days: [
@@ -111,40 +111,53 @@ const routine = [
     ]}
 ];
 
+const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
 
 // DOM Elements
 const dateDisplay = document.getElementById('date-display');
 const currentWeekDisplay = document.getElementById('current-week-display');
 const currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display');
 const exerciseListDiv = document.getElementById('exercise-list');
+const dailyProgressBarContainer = document.getElementById('daily-progress-container'); // NEW
 const dailyProgressBar = document.getElementById('daily-progress-bar');
 const dailyProgressText = document.getElementById('daily-progress-text');
 const summaryContent = document.getElementById('summary-content');
 const resetWeekButton = document.getElementById('reset-week-button');
+const weekScheduleContent = document.getElementById('week-schedule-content'); // NEW
 
 // --- Helper Functions ---
 
 /**
  * Gets the current week number (0-indexed from the start date) and day of the week.
- * Stores the start date in localStorage if not present.
- * @returns {object} { week: number, dayOfWeek: number (0=Mon, 6=Sun), totalDaysInRoutine: number }
+ * Stores the start date in localStorage if not present or invalid.
+ * @returns {object} { week: number, dayOfWeek: number (0=Mon, 6=Sun), totalWeeks: number, isRoutineFinished: boolean }
  */
 function getCurrentRoutineProgress() {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize to start of day
 
-    let startDate = localStorage.getItem('routineStartDate');
-    if (!startDate) {
+    let startDateISO = localStorage.getItem('routineStartDate');
+    let startDate;
+
+    if (!startDateISO) {
         // If no start date, set it to today and initialize weekly progress
-        startDate = today.toISOString();
-        localStorage.setItem('routineStartDate', startDate);
+        startDate = today;
+        localStorage.setItem('routineStartDate', startDate.toISOString());
         initializeWeeklyProgress();
     } else {
-        startDate = new Date(startDate);
+        startDate = new Date(startDateISO);
+        // Validate if startDate parsed correctly. If not, reset it.
+        if (isNaN(startDate.getTime())) { // Check if date is "Invalid Date"
+            console.warn("Invalid routineStartDate found in localStorage, resetting.");
+            startDate = today;
+            localStorage.setItem('routineStartDate', startDate.toISOString());
+            initializeWeeklyProgress(); // Re-initialize weekly summary if startDate was invalid
+        }
     }
 
-    const diffTime = Math.abs(today - startDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffTime = Math.abs(today.getTime() - startDate.getTime()); // Use getTime() for reliable difference
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Use floor for full days passed
 
     // Calculate current week (0-indexed)
     const currentWeekIndex = Math.floor(diffDays / 7);
@@ -152,25 +165,23 @@ function getCurrentRoutineProgress() {
 
     // Ensure we don't go beyond the routine length
     const totalWeeks = routine.length;
+    let isRoutineFinished = false;
+    let effectiveWeekIndex = currentWeekIndex;
+
     if (currentWeekIndex >= totalWeeks) {
         // Routine is complete, or we're past 8 weeks.
-        // We can either loop back, or just show the last week's exercises.
-        // For now, let's stick to the last week's routine.
-        return {
-            week: totalWeeks - 1, // Stay on the last defined week
-            dayOfWeek: currentDayOfWeek,
-            isRoutineFinished: true,
-            totalWeeks: totalWeeks
-        };
+        effectiveWeekIndex = totalWeeks - 1; // Stick to the last defined week's routine
+        isRoutineFinished = true;
     }
 
     return {
-        week: currentWeekIndex,
+        week: effectiveWeekIndex,
         dayOfWeek: currentDayOfWeek,
-        isRoutineFinished: false,
+        isRoutineFinished: isRoutineFinished,
         totalWeeks: totalWeeks
     };
 }
+
 
 /**
  * Loads exercises for the current day based on the routine.
@@ -186,7 +197,7 @@ function loadDailyRoutine() {
 
 
     const weekRoutine = routine[week];
-    let dailyExercises = weekRoutine ? weekRoutine.days[dayOfWeek] : null;
+    let dailyExercises = (weekRoutine && weekRoutine.days) ? weekRoutine.days[dayOfWeek] : null;
 
     exerciseListDiv.innerHTML = ''; // Clear previous exercises
 
@@ -222,12 +233,19 @@ function loadDailyRoutine() {
             });
         });
         exerciseListDiv.appendChild(ul);
+
+        // Show progress bar and text if exercises are scheduled
+        dailyProgressBarContainer.style.display = 'block';
+
     } else {
         exerciseListDiv.innerHTML = '<p>No specific exercises planned for today. Enjoy your rest or free practice!</p>';
+        // Hide progress bar and text if no exercises are scheduled
+        dailyProgressBarContainer.style.display = 'none';
     }
 
     updateDailyProgressBar(); // Initial update
     updateWeeklySummary(); // Update summary on load
+    loadWeeklySchedule(); // Load weekly schedule too
 }
 
 /**
@@ -266,7 +284,8 @@ function toggleExerciseComplete(exerciseName, isCompleted) {
 function updateDailyProgressBar() {
     const { week, dayOfWeek } = getCurrentRoutineProgress();
     const todayKey = new Date().toISOString().split('T')[0];
-    const currentDayExercises = routine[week]?.days[dayOfWeek] || [];
+    // Ensure the array access is safe
+    const currentDayExercises = routine[week]?.days?.[dayOfWeek] || [];
     const completedExercises = getDailyProgress(todayKey);
 
     const totalExercises = currentDayExercises.length;
@@ -279,6 +298,42 @@ function updateDailyProgressBar() {
 
     dailyProgressBar.style.width = `${percentage}%`;
     dailyProgressText.textContent = `${completedCount}/${totalExercises} exercises complete`;
+}
+
+
+// --- Weekly Schedule Logic (NEW) ---
+function loadWeeklySchedule() {
+    const { week: currentRoutineWeekIndex } = getCurrentRoutineProgress();
+    const currentWeekRoutine = routine[currentRoutineWeekIndex];
+
+    weekScheduleContent.innerHTML = ''; // Clear previous schedule
+
+    if (!currentWeekRoutine || !currentWeekRoutine.days) {
+        weekScheduleContent.innerHTML = '<p>No routine defined for this week.</p>';
+        return;
+    }
+
+    const ul = document.createElement('ul');
+    currentWeekRoutine.days.forEach((dayExercises, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<h3>${dayNames[index]}</h3>`; // Use predefined day names
+
+        if (dayExercises && dayExercises.length > 0) {
+            const exerciseUl = document.createElement('ul');
+            exerciseUl.style.listStyleType = 'none'; // Remove bullets for nested list
+            exerciseUl.style.paddingLeft = '0'; // Remove padding for nested list
+            dayExercises.forEach(exerciseName => {
+                const exerciseLi = document.createElement('li');
+                exerciseLi.textContent = exerciseName;
+                exerciseUl.appendChild(exerciseLi);
+            });
+            li.appendChild(exerciseUl);
+        } else {
+            li.innerHTML += '<p>Rest Day / No Scheduled Exercises</p>';
+        }
+        ul.appendChild(li);
+    });
+    weekScheduleContent.appendChild(ul);
 }
 
 
@@ -309,15 +364,17 @@ function updateWeeklySummary() {
     const lastCalculatedWeek = weeklySummary.lastCalculatedWeek;
 
     // Check if a new week has started and summary needs to be generated for the previous one
-    if (currentRoutineWeekIndex > lastCalculatedWeek) {
-        // Calculate summary for the just-completed week (lastCalculatedWeek)
-        if (lastCalculatedWeek >= 0) { // Don't calculate for week -1
-            const previousWeekData = calculateSummaryForWeek(lastCalculatedWeek, dailyProgress);
-            weeklySummary.weekData[lastCalculatedWeek] = previousWeekData;
-            console.log(`Summary calculated for Week ${lastCalculatedWeek + 1}`);
-        }
+    // This logic ensures summary is generated for the week that *just ended*
+    if (currentRoutineWeekIndex > lastCalculatedWeek && lastCalculatedWeek >= 0) {
+        const previousWeekData = calculateSummaryForWeek(lastCalculatedWeek, dailyProgress);
+        weeklySummary.weekData[lastCalculatedWeek] = previousWeekData;
+        console.log(`Summary calculated for Week ${lastCalculatedWeek + 1}`);
 
-        // Clear daily progress for dates *before* the start of the current routine week
+        // After calculating summary for the previous week, update lastCalculatedWeek
+        weeklySummary.lastCalculatedWeek = currentRoutineWeekIndex;
+        localStorage.setItem('weeklySummary', JSON.stringify(weeklySummary));
+
+        // Clear daily progress for dates *before* the start of the newly current routine week
         const routineStartDate = new Date(localStorage.getItem('routineStartDate'));
         const currentWeekStartDate = new Date(routineStartDate);
         currentWeekStartDate.setDate(routineStartDate.getDate() + (currentRoutineWeekIndex * 7));
@@ -330,9 +387,6 @@ function updateWeeklySummary() {
             }
         }
         localStorage.setItem('dailyProgress', JSON.stringify(dailyProgress));
-
-        weeklySummary.lastCalculatedWeek = currentRoutineWeekIndex; // Update last calculated week
-        localStorage.setItem('weeklySummary', JSON.stringify(weeklySummary));
     }
 
 
@@ -379,14 +433,20 @@ function updateWeeklySummary() {
  */
 function calculateSummaryForWeek(weekIndex, dailyProgressData) {
     const startDate = new Date(localStorage.getItem('routineStartDate'));
+    // Ensure startDate is valid before proceeding
+    if (isNaN(startDate.getTime())) {
+        console.error("calculateSummaryForWeek called with invalid routineStartDate.");
+        return {
+            totalSessions: 0,
+            completedSessions: 0,
+            totalExercisesCompleted: 0,
+            totalExercisesMissed: 0
+        };
+    }
+
     const weekStartDate = new Date(startDate);
     weekStartDate.setDate(startDate.getDate() + (weekIndex * 7)); // Start of the specific week
     weekStartDate.setHours(0,0,0,0);
-
-    const weekEndDate = new Date(weekStartDate);
-    weekEndDate.setDate(weekStartDate.getDate() + 6); // End of the specific week
-    weekEndDate.setHours(23,59,59,999);
-
 
     let totalSessions = 0;
     let completedSessions = 0;
@@ -398,7 +458,7 @@ function calculateSummaryForWeek(weekIndex, dailyProgressData) {
         currentDayDate.setDate(weekStartDate.getDate() + d);
         const dayKey = currentDayDate.toISOString().split('T')[0];
 
-        const dayRoutine = routine[weekIndex]?.days[d];
+        const dayRoutine = routine[weekIndex]?.days?.[d]; // Use optional chaining for safety
 
         if (dayRoutine && dayRoutine.length > 0) { // If there were exercises planned for this day
             totalSessions++;
@@ -431,6 +491,36 @@ function resetAllProgress() {
         localStorage.removeItem('dailyProgress');
         localStorage.removeItem('weeklySummary');
         loadDailyRoutine(); // Re-initialize everything
+        showTab('daily-routine-section'); // Go back to daily view
+    }
+}
+
+
+// --- Tab Switching Logic (NEW) ---
+function showTab(tabId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.style.display = 'none';
+    });
+
+    // Deactivate all tabs
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // Show the selected tab content
+    document.getElementById(tabId).style.display = 'block';
+
+    // Activate the clicked tab button
+    document.querySelector(`.nav-tab[data-target="${tabId}"]`).classList.add('active');
+
+    // Special handling for summary to ensure it's up-to-date when viewed
+    if (tabId === 'weekly-summary-section') {
+        updateWeeklySummary();
+    }
+    // Special handling for weekly schedule to ensure it's up-to-date when viewed
+    if (tabId === 'weekly-schedule-section') {
+        loadWeeklySchedule();
     }
 }
 
@@ -440,4 +530,15 @@ function resetAllProgress() {
 document.addEventListener('DOMContentLoaded', () => {
     loadDailyRoutine();
     resetWeekButton.addEventListener('click', resetAllProgress);
+
+    // Add event listeners for navbar tabs
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', (event) => {
+            const targetId = event.target.dataset.target;
+            showTab(targetId);
+        });
+    });
+
+    // Show the daily routine tab by default on load
+    showTab('daily-routine-section');
 });
