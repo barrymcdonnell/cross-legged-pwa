@@ -8,7 +8,7 @@ body {
 }
 
 header {
-    background-color: #4CAF50; /* Green */
+    background-color: #000080; /* Navy */
     color: white;
     padding: 1em 0;
     text-align: center;
@@ -20,6 +20,7 @@ header {
 
 header h1 {
     margin-bottom: 5px;
+    color: white;
 }
 
 #date-display {
@@ -58,7 +59,7 @@ header h1 {
 }
 
 .nav-tab.active {
-    background-color: #4CAF50; /* Active tab color */
+    background-color: #000080; /* Active tab color */
     color: white;
     font-weight: bold;
 }
