@@ -321,29 +321,38 @@ function loadWeeklySchedule() {
     const today = new Date();
     const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday
 
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
     document.getElementById('schedule-week-display').textContent = `Week ${currentDisplayWeek + 1}`;
 
     for (let i = 0; i < WEEK_LENGTH; i++) {
         const dayCard = document.createElement('div');
         dayCard.classList.add('day-card');
         dayCard.dataset.dayIndex = i; // Store day index
+        dayCard.dataset.weekIndex = currentDisplayWeek; // Store week index
 
-        // Add 'current-day' class if it's today's day of the week
+        // Add 'current-day' class if it's today's day of the week AND this is the actual current program week
         if (i === currentDayOfWeek && currentDisplayWeek === Math.floor(getDaysSinceProgramStart() / WEEK_LENGTH)) {
             dayCard.classList.add('current-day');
         }
 
-        // Add 'scheduled' class based on your pattern
-        if (DEFAULT_WEEKLY_ROUTINE_PATTERN.includes(i)) {
+        // Determine if it's a routine day based on your 'routine' data structure
+        // Assuming 'routine' is an array of weeks, and each week has a 'days' array
+        const weekRoutineData = routine[currentDisplayWeek];
+        const dayExercises = weekRoutineData && weekRoutineData.days ? weekRoutineData.days[i] : [];
+
+        if (dayExercises && dayExercises.length > 0) {
             dayCard.classList.add('scheduled');
             dayCard.innerHTML = `<h3>${dayNames[i]}</h3><p class="status">Routine Day</p>`;
+            // Future: Add logic to display a checkmark if completed
         } else {
             dayCard.innerHTML = `<h3>${dayNames[i]}</h3><p class="status">Rest Day</p>`;
         }
 
-        // Future: Add logic to check for 'completed' class based on saved progress
+        // Add click listener to each day card
+        dayCard.addEventListener('click', () => {
+            const clickedWeekIndex = parseInt(dayCard.dataset.weekIndex);
+            const clickedDayIndex = parseInt(dayCard.dataset.dayIndex);
+            showExercisesForDay(clickedWeekIndex, clickedDayIndex);
+        });
 
         weekScheduleGrid.appendChild(dayCard);
     }
@@ -373,6 +382,40 @@ function getDaysSinceProgramStart() {
     const diffTime = Math.abs(now - programStartDate);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+}
+
+// --- New function to display exercises for a specific day ---
+function showExercisesForDay(weekIndex, dayIndex) {
+    const dailyRoutineSection = document.getElementById('daily-routine-section');
+    const exerciseList = document.getElementById('exercise-list');
+    const weeklyOverview = document.getElementById('weekly-overview');
+
+    // Hide daily progress elements if they are not relevant to historical viewing
+    document.getElementById('daily-progress-container').style.display = 'none';
+
+    // Update the header to show the specific day's exercises
+    weeklyOverview.innerHTML = `Week ${weekIndex + 1} | ${dayNames[dayIndex]}`;
+
+    exerciseList.innerHTML = ''; // Clear existing exercises
+
+    const weekRoutineData = routine[weekIndex]; // Assuming 'routine' is your global routine object/array
+    if (!weekRoutineData || !weekRoutineData.days || !weekRoutineData.days[dayIndex] || weekRoutineData.days[dayIndex].length === 0) {
+        exerciseList.innerHTML = '<p>Rest Day / No Scheduled Exercises.</p>';
+    } else {
+        const ul = document.createElement('ul');
+        weekRoutineData.days[dayIndex].forEach(exerciseName => {
+            const li = document.createElement('li');
+            // For a "view only" mode, checkboxes might not be needed
+            // If you want to enable completion tracking for historical days, you'd add the checkbox
+            // and logic here, but it's often simpler for a schedule view to be read-only.
+            li.textContent = exerciseName;
+            ul.appendChild(li);
+        });
+        exerciseList.appendChild(ul);
+    }
+
+    // Switch to the daily routine tab to display these exercises
+    showTab('daily-routine-section');
 }
 
 // You would call loadWeeklySchedule() when the schedule tab is opened
