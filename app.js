@@ -496,9 +496,9 @@ function resetAllProgress() {
 }
 
 
-// --- Tab Switching Logic (NEW) ---
+// --- Tab Switching Logic ---
 function showTab(tabId) {
-    // Hide all tab contents
+    // Hide all tab contents first
     document.querySelectorAll('.tab-content').forEach(content => {
         content.style.display = 'none';
     });
@@ -508,33 +508,35 @@ function showTab(tabId) {
         tab.classList.remove('active');
     });
 
-    // Show the selected tab content
-    document.getElementById(tabId).style.display = 'block';
+    const targetSection = document.getElementById(tabId);
+
+    // Call content loading functions *before* displaying
+    if (tabId === 'daily-routine-section') {
+        loadDailyRoutine(); // Ensure daily routine is always fresh
+    } else if (tabId === 'weekly-schedule-section') {
+        loadWeeklySchedule();
+    } else if (tabId === 'weekly-summary-section') {
+        updateWeeklySummary();
+    }
+    // 'full-routine-details' is static, so no function call needed
+
+    // Now, show the selected tab content
+    targetSection.style.display = 'block';
 
     // Activate the clicked tab button
     document.querySelector(`.nav-tab[data-target="${tabId}"]`).classList.add('active');
-
-    // Special handling for summary to ensure it's up-to-date when viewed
-    if (tabId === 'weekly-summary-section') {
-        updateWeeklySummary();
-    }
-    // Special handling for weekly schedule to ensure it's up-to-date when viewed
-    if (tabId === 'weekly-schedule-section') {
-        loadWeeklySchedule();
-    }
 }
-
 
 // --- Event Listeners and Initial Load ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadDailyRoutine();
+    //loadDailyRoutine();
     resetWeekButton.addEventListener('click', resetAllProgress);
 
     // Add event listeners for navbar tabs
     document.querySelectorAll('.nav-tab').forEach(tab => {
         tab.addEventListener('click', (event) => {
-            const targetId = event.target.dataset.target;
+            const targetId = event.target.closest('.nav-tab').dataset.target;
             showTab(targetId);
         });
     });
