@@ -61,6 +61,8 @@ header h1 {
     align-items: center;
     justify-content: center;
     min-width: 60px; /* Ensure a minimum width for each tab */
+    margin: 0 2px; /* Adds 2px space to the left and right of each tab */
+    border-radius: 8px; 
 }
 
 .nav-tab i { /* Styling for Font Awesome icons */
@@ -80,6 +82,7 @@ header h1 {
     background-color: #000080; /* Active tab color (DarkBlue) */
     color: white;
     font-weight: bold;
+    border-radius: 8px;
 }
 
 main {
