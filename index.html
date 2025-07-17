@@ -11,11 +11,19 @@
 </head>
 <body>
     <header>
-        <h1>Cross-Legged Mobility</h1>
+        <h1>8-Week Cross-Legged Sitting Routine</h1>
         <div id="date-display"></div>
     </header>
+
+    <nav class="navbar">
+        <button class="nav-tab active" data-target="daily-routine-section">Today's Routine</button>
+        <button class="nav-tab" data-target="weekly-schedule-section">Weekly Schedule</button>
+        <button class="nav-tab" data-target="full-routine-details">Full Routine Details</button>
+        <button class="nav-tab" data-target="weekly-summary-section">Weekly Summary</button>
+    </nav>
+
     <main>
-        <section id="daily-routine-section" class="card">
+        <section id="daily-routine-section" class="card tab-content active">
             <h2>Today's Routine</h2>
             <div id="weekly-overview">
                 <span id="current-week-display"></span> | Day <span id="current-day-of-week-display"></span>
@@ -23,24 +31,34 @@
             <div id="exercise-list">
                 <p>Loading today's exercises...</p>
             </div>
-            <div id="daily-progress-bar-container">
-                <div id="daily-progress-bar"></div>
+            <div id="daily-progress-container" style="display: none;">
+                <div id="daily-progress-bar-container">
+                    <div id="daily-progress-bar"></div>
+                </div>
+                <div id="daily-progress-text">0/0 exercises complete</div>
             </div>
-            <div id="daily-progress-text">0/0 exercises complete</div>
         </section>
 
-        <hr/> <section id="weekly-summary-section" class="card">
+        <section id="weekly-schedule-section" class="card tab-content" style="display: none;">
+            <h2>This Week's Schedule</h2>
+            <div id="week-schedule-content">
+                <p>Loading weekly schedule...</p>
+            </div>
+        </section>
+
+        <section id="weekly-summary-section" class="card tab-content" style="display: none;">
             <h2>Weekly Summary</h2>
             <div id="summary-content">
                 <p>Summary will appear here at the end of each week.</p>
-                <button id="reset-week-button" style="display: none;">Reset Week Progress</button>
+                <button id="reset-week-button" style="display: none;">Reset All Progress</button>
             </div>
         </section>
 
-        <hr/> <section id="full-routine-details" class="card">
+
+        <section id="full-routine-details" class="card tab-content" style="display: none;">
             <h2>Full 8-Week Routine Details</h2>
             <p>Reference all exercises and weekly plans below:</p>
-            <section class="week-section" id="week-1-2">
+            <section class="week-section">
                 <h3>Weeks 1-2: Foundation and Gentle Opening</h3>
                 <h4>General Schedule (Aim for 3-4 times a week):</h4>
                 <ul>
@@ -70,7 +88,7 @@
                 </details>
             </section>
 
-            <section class="week-section" id="week-3-4">
+            <section class="week-section">
                 <h3>Weeks 3-4: Gradual Deepening</h3>
                 <ul>
                     <li><strong>Stretches:</strong> Butterfly (begin gently leaning forward), Figure Four (gentle pull), Low Lunge (hold longer). Introduce Seated Forward Fold.</li>
@@ -84,7 +102,7 @@
                 </details>
             </section>
 
-            <section class="week-section" id="week-5-6">
+            <section class="week-section">
                 <h3>Weeks 5-6: Targeted Flexibility and Active Engagement</h3>
                 <ul>
                     <li><strong>Stretches:</strong> Butterfly (deeper forward fold, consider gentle knee presses), Figure Four (deeper pull). *Cautiously* introduce Frog Pose (very gentle, minimal width, stay on hands if forearms too intense).</li>
@@ -100,7 +118,7 @@
                 </details>
             </section>
 
-            <section class="week-section" id="week-7-8">
+            <section class="week-section">
                 <h3>Weeks 7-8: Consolidation and Maintenance Preparation</h3>
                 <ul>
                     <li><strong>Stretches:</strong> Continue all previous stretches, aiming for your comfortable maximum. Increase hold times to 45-60 seconds, 3 repetitions.</li>
