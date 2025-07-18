@@ -482,6 +482,9 @@ function updateWeeklyOverview() {
  */
 function getDailyProgress(dateKey) {
     const progress = JSON.parse(localStorage.getItem('dailyProgress')) || {};
+    console.log('getDailyProgress - dateKey:', dateKey); // ADD THIS
+    console.log('getDailyProgress - progressData:', progressData); // ADD THIS
+    console.log('getDailyProgress - returning:', progressData[dateKey] || []); // ADD THIS
     return progress[dateKey] || [];
 }
 
@@ -495,6 +498,9 @@ function toggleExerciseComplete(exerciseName, isCompleted) {
     const progress = JSON.parse(localStorage.getItem('dailyProgress')) || {};
     let dailyCompleted = progress[todayKey] || [];
 
+    console.log('toggleExerciseComplete - Initial dailyCompleted for', dateKey, ':', dailyCompleted); // ADD THIS
+    console.log('toggleExerciseComplete - Toggling:', exerciseName, 'to completed status:', isCompleted); // ADD THIS
+    
     if (isCompleted && !dailyCompleted.includes(exerciseName)) {
         dailyCompleted.push(exerciseName);
     } else if (!isCompleted) {
@@ -503,6 +509,11 @@ function toggleExerciseComplete(exerciseName, isCompleted) {
 
     progress[todayKey] = dailyCompleted;
     localStorage.setItem('dailyProgress', JSON.stringify(progress));
+
+    console.log('toggleExerciseCompletion - Updated dailyCompleted for', dateKey, ':', dailyCompleted); // ADD THIS
+    console.log('toggleExerciseCompletion - localStorage after update:', JSON.parse(localStorage.getItem('dailyProgress'))); // ADD THIS
+
+    loadDailyRoutine();
 }
 
 /**
