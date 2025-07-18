@@ -26,17 +26,7 @@ let currentDisplayWeek = 0; // 0-indexed for program weeks
 const dailyNotesTextarea = document.getElementById('daily-notes-textarea');
 const saveNotesBtn = document.getElementById('save-notes-btn');
 
-function displayCurrentDate() {
-    // Current date and day of the week
-    const today = new Date();
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = today.toLocaleDateString(undefined, options); // 'undefined' uses user's locale
 
-    // Update the date display element
-    if (dateDisplay) { // Check if the element was found
-        dateDisplay.textContent = formattedDate;
-    }
-}
 
 // --- CORE APPLICATION LOGIC ---
 
@@ -332,7 +322,6 @@ const routine = [
 
 const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-
 // DOM Elements
 const dateDisplay = document.getElementById('date-display');
 const currentWeekDisplay = document.getElementById('current-week-display');
@@ -346,6 +335,19 @@ const resetWeekButton = document.getElementById('reset-week-button');
 const weekScheduleContent = document.getElementById('week-schedule-content'); // NEW
 
 // --- Helper Functions ---
+
+// Get the date for thet header
+function displayCurrentDate() {
+    // Current date and day of the week
+    const today = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = today.toLocaleDateString(undefined, options); // 'undefined' uses user's locale
+
+    // Update the date display element
+    if (dateDisplay) { // Check if the element was found
+        dateDisplay.textContent = formattedDate;
+    }
+}
 
 /**
  * Gets the current week number (0-indexed from the start date) and day of the week.
