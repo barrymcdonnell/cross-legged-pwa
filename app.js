@@ -130,7 +130,7 @@ const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Satur
 const dateDisplay = document.getElementById('date-display');
 const currentWeekDisplay = document.getElementById('current-week-display');
 const currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display');
-const exerciseListDiv = document.getElementById('exercise-list');
+const exerciseList = document.getElementById('exercise-list');
 const dailyProgressBarContainer = document.getElementById('daily-progress-container'); // NEW
 const dailyProgressBar = document.getElementById('daily-progress-bar');
 const dailyProgressText = document.getElementById('daily-progress-text');
@@ -161,6 +161,11 @@ function getCurrentRoutineProgress() {
  * Loads exercises for the current day based on the routine.
  */
 function loadDailyRoutine() {
+    if (isShowingScheduledDay) {
+        // Prevent loadDailyRoutine from running if showExercisesForDay is active
+        // The content should already be set by showExercisesForDay
+        return;
+    }
     // 1. Get current routine progress only once
     const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex, totalDaysElapsed } = getCurrentRoutineProgress();
     const today = new Date();
@@ -367,38 +372,42 @@ function getDaysSinceProgramStart() {
     return diffDays; // 0 for the start day, 1 for the next day, etc.
 }
 
+// A flag to indicate if daily-routine-section is currently showing a specific schedule day
+let isShowingScheduledDay = false;
+
 // --- New function to display exercises for a specific day ---
 function showExercisesForDay(weekIndex, dayIndex) {
+    isShowingScheduledDay = true; // Set flag when viewing a scheduled day
+
     const dailyRoutineSection = document.getElementById('daily-routine-section');
     const exerciseList = document.getElementById('exercise-list');
     const weeklyOverview = document.getElementById('weekly-overview');
+    const dailyProgressContainer = document.getElementById('daily-progress-container');
 
-    // Hide daily progress elements if they are not relevant to historical viewing
-    document.getElementById('daily-progress-container').style.display = 'none';
+    weeklyOverview.innerHTML = `Week ${weekIndex + 1} | ${dayNames[dayIndex]}`; // Update header
+    exerciseList.innerHTML = ''; // Clear current exercises
 
-    // Update the header to show the specific day's exercises
-    weeklyOverview.innerHTML = `Week ${weekIndex + 1} | ${dayNames[dayIndex]}`;
+    const weekRoutineData = routine[weekIndex];
+    let exercisesToDisplay = [];
 
-    exerciseList.innerHTML = ''; // Clear existing exercises
+    if (weekRoutineData && weekRoutineData.days && weekRoutineData.days[dayIndex] && weekRoutineData.days[dayIndex].length > 0) {
+        exercisesToDisplay = weekRoutineData.days[dayIndex];
+    }
 
-    const weekRoutineData = routine[weekIndex]; // Assuming 'routine' is your global routine object/array
-    if (!weekRoutineData || !weekRoutineData.days || !weekRoutineData.days[dayIndex] || weekRoutineData.days[dayIndex].length === 0) {
-        exerciseList.innerHTML = '<p>Rest Day / No Scheduled Exercises.</p>';
+    if (exercisesToDisplay.length === 0) {
+        exerciseList.innerHTML = '<p>No exercises planned for this day. Enjoy your rest!</p>';
     } else {
         const ul = document.createElement('ul');
-        weekRoutineData.days[dayIndex].forEach(exerciseName => {
+        exercisesToDisplay.forEach(exerciseName => {
             const li = document.createElement('li');
-            // For a "view only" mode, checkboxes might not be needed
-            // If you want to enable completion tracking for historical days, you'd add the checkbox
-            // and logic here, but it's often simpler for a schedule view to be read-only.
-            li.textContent = exerciseName;
+            li.textContent = exerciseName; // No checkboxes for view-only historical/future days
             ul.appendChild(li);
         });
         exerciseList.appendChild(ul);
     }
+    dailyProgressContainer.style.display = 'none'; // Always hide progress bar for scheduled day views
 
-    // Switch to the daily routine tab to display these exercises
-    showTab('daily-routine-section');
+    showTab('daily-routine-section'); // Switch to the Today tab
 }
 
 // You would call loadWeeklySchedule() when the schedule tab is opened
@@ -591,7 +600,13 @@ function showTab(tabId) {
     targetSection.style.display = 'block';
 
     // Activate the clicked tab button
-    document.querySelector(`.nav-tab[data-target="${tabId}"]`).classList.add('active');
+    // Ensure your nav-tabs have data-target matching your section IDs
+    const activeTabElement = document.querySelector(`.nav-tab[data-target="${tabId}"]`);
+    if (activeTabElement) {
+        activeTabElement.classList.add('active');
+    } else {
+        console.warn(`No nav-tab found with data-target="${tabId}".`);
+    }
 }
 
 // --- Event Listeners and Initial Load ---
@@ -604,10 +619,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.nav-tab').forEach(tab => {
         tab.addEventListener('click', (event) => {
             const targetId = event.target.closest('.nav-tab').dataset.target;
-            showTab(targetId);
+
+            if (targetId === 'daily-routine-section') {
+                isShowingScheduledDay = false; // Reset the flag when user clicks 'Today' tab
+                loadDailyRoutine(); // Force load today's actual routine
+            }
+            showTab(targetId); // This will handle visibility and active class for all tabs
         });
     });
 
-    // Show the daily routine tab by default on load
+    // Initial load for Today's Routine
+    isShowingScheduledDay = false; // Ensure flag is false on initial load
     showTab('daily-routine-section');
 });
