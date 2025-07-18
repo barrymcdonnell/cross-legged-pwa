@@ -50,7 +50,14 @@ const routine = [
         null, // Day 1
         ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 2
         null, // Day 3
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 4
+        4: {warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+                ],
+        exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 4
+        },
         null, // Day 5
         null  // Day 6
     ]},
