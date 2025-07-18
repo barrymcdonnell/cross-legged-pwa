@@ -365,16 +365,7 @@ function loadDailyRoutine() {
     const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex } = getCurrentRoutineProgress();
     const todayKey = new Date().toISOString().split('T')[0];
 
-    // ADD THESE LOGS
-    console.log('loadDailyRoutine - Attempting to load for:');
-    console.log('  currentRoutineWeekIndex:', currentRoutineWeekIndex);
-    console.log('  currentDayInWeekIndex:', currentDayInWeekIndex);
-    // End add
-    
     const currentDayData = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex];
-
-    // ADD THIS LOG
-    console.log('  currentDayData fetched:', currentDayData);
     
     if (!currentDayData) {
         // Fallback for days beyond the routine or undefined days
@@ -389,41 +380,58 @@ function loadDailyRoutine() {
     let htmlContent = '';
 
     // NEW: Display Warm-up Exercises
-    if (dailyWarmup.length > 0) {
-        htmlContent += '<h3>Warm-up</h3>';
-        htmlContent += '<ul class="warmup-list">'; // Add a class for potential styling
-        dailyWarmup.forEach(exercise => {
-            htmlContent += `<li><i class="fas fa-play-circle warm-up-icon"></i> ${exercise}</li>`; // Added an icon
+    if (currentDayData.warmup && currentDayData.warmup.length > 0) {
+        htmlContent += '<div class="warmup-section">'; // Added a div for styling the whole section
+        htmlContent += '<h3>Warmup</h3>';
+        htmlContent += '<ul>';
+        currentDayData.warmup.forEach(warmupExercise => {
+            htmlContent += `<li>${warmupExercise}</li>`;
         });
         htmlContent += '</ul>';
+        htmlContent += '</div>'; // Close the warmup section div
     }
 
     // Display Main Exercises
-    if (dailyExercises.length > 0) {
-        htmlContent += '<h3>Main Routine</h3>'; // Changed to "Main Routine" for clarity
-        htmlContent += '<ul class="exercise-checklist">';
-        dailyExercises.forEach((exercise, index) => {
-            const isCompleted = getDailyProgress(todayKey).includes(exercise);
-            const checked = isCompleted ? 'checked' : '';
-            const listItemClass = isCompleted ? 'completed' : '';
+    if (currentDayData.exercises && currentDayData.exercises.length > 0) {
+        htmlContent += '<div class="main-routine-section">'; // Added a div for styling the whole section
+        htmlContent += '<h3>Main Routine</h3>'; // Changed heading
+        htmlContent += '<ul class="exercise-checklist">'; // Keep the class for checklist specific styling
+        const completedExercises = getDailyProgress(todayKey);
+
+        currentDayData.exercises.forEach((exercise, index) => {
+            const isCompleted = completedExercises.includes(exercise);
+            const checkedAttribute = isCompleted ? 'checked' : '';
             htmlContent += `
-                <li class="${listItemClass}">
-                    <label>
-                        <input type="checkbox" data-exercise="${exercise}" ${checked} />
-                        ${exercise}
-                    </label>
+                <li>
+                    <input type="checkbox" id="exercise-${index}" value="${exercise}" ${checkedAttribute} data-exercise="${exercise}">
+                    <label for="exercise-${index}">${exercise}</label>
                 </li>
             `;
         });
         htmlContent += '</ul>';
+        htmlContent += '</div>'; // Close the main routine section div
     } else {
-        // No main exercises planned (rest day or undefined)
-        htmlContent += '<p>No main exercises planned for today. Enjoy your rest day!</p>';
-        dailyProgressContainer.style.display = 'none'; // Hide progress bar for rest days
+        // This 'else' block ensures a message is displayed if there are no main exercises.
+        // It might be redundant if the !currentDayData check handles "no workout day".
+        // Consider if you want this message only if main exercises are missing but warmups exist.
+        if ((!currentDayData.warmup || currentDayData.warmup.length === 0) && (!currentDayData.exercises || currentDayData.exercises.length === 0)) {
+            htmlContent = '<p>No exercises planned for today.</p>';
+        } else if (currentDayData.warmup && currentDayData.warmup.length > 0) {
+            // If only warmups are present, and no main exercises, you might want a different message.
+            // Or this could be implicitly handled by the sections above.
+        }
     }
 
     exerciseList.innerHTML = htmlContent; // Update the display
 
+    // Attach event listeners for checkboxes after rendering HTML
+    document.querySelectorAll('#exercise-list input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', (event) => {
+            const exerciseName = event.target.dataset.exercise;
+            toggleExerciseCompletion(todayKey, exerciseName, event.target.checked);
+        });
+    });
+    
     // Only show progress bar if there are main exercises
     if (dailyExercises.length > 0) {
         dailyProgressContainer.style.display = 'block';
