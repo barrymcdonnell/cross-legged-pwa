@@ -409,6 +409,14 @@ main {
     cursor: pointer;
 }
 
+.exercise-detail {
+    display: block; /* Ensures it goes to the next line */
+    font-size: 0.85em; /* Smaller font size */
+    font-style: italic; /* Italic text */
+    color: #666; /* Slightly lighter color */
+    margin-top: 2px; /* Small gap between name and detail */
+}
+
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
     .navbar {
