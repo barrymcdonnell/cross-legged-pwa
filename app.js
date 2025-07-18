@@ -525,7 +525,7 @@ function updateDailyProgressBar() {
     const warmupCount = currentDayData.warmup ? currentDayData.warmup.length : 0;
     const exerciseCount = currentDayData.exercises ? currentDayData.exercises.length : 0;
 
-    const totalExercises = warmupCount + exerciseCount;
+    const totalExercises = currentDayData.exercises ? currentDayData.exercises.length : 0;
     const completedExercises = getDailyProgress(todayKey); // This should return an array of completed exercises
     const completedCount = completedExercises.length;
 
