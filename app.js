@@ -913,14 +913,17 @@ function showTab(tabId) {
 // --- Event Listeners and Initial Load ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    //loadDailyRoutine();
-    resetWeekButton.addEventListener('click', resetAllProgress);
+    // --- All your DOMContentLoaded code should go here, in ONE listener ---
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // ... your existing DOMContentLoaded code ...
-        showTab('daily-routine-section'); // Make sure this is called for initial load
-        displayCurrentDate(); // <--- Call here to show date on initial load
-    });
+    // Ensure dateDisplay is initialized *before* displayCurrentDate is called
+    // (If dateDisplay is a global const, this is fine, otherwise initialize it here)
+    // Example if it's not global: const dateDisplay = document.getElementById('date-display');
+
+    // Call displayCurrentDate() here for initial load
+    displayCurrentDate(); // <--- Correct place to call it for initial page load
+
+    // Existing event listeners and initial setup
+    resetWeekButton.addEventListener('click', resetAllProgress);
 
     // Add event listeners for navbar tabs
     document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -930,6 +933,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetId === 'daily-routine-section') {
                 isShowingScheduledDay = false; // Reset the flag when user clicks 'Today' tab
                 loadDailyRoutine(); // Force load today's actual routine
+                displayCurrentDate(); // <--- Also call here if you want date to refresh on tab switch
             }
             showTab(targetId); // This will handle visibility and active class for all tabs
         });
@@ -946,5 +950,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial load for Today's Routine
     isShowingScheduledDay = false; // Ensure flag is false on initial load
-    showTab('daily-routine-section');
+    showTab('daily-routine-section'); // This should trigger loadDailyRoutine() which updates content
 });
