@@ -23,6 +23,9 @@ const DEFAULT_WEEKLY_ROUTINE_PATTERN = [1, 3, 5];
 
 let currentDisplayWeek = 0; // 0-indexed for program weeks
 
+const dailyNotesTextarea = document.getElementById('daily-notes-textarea');
+const saveNotesBtn = document.getElementById('save-notes-btn');
+
 // --- CORE APPLICATION LOGIC ---
 
 // Exercise Data - Define all exercises with their details
@@ -291,6 +294,11 @@ function updateDailyProgressBar() {
     const totalExercises = currentDayExercises.length;
     const completedCount = completedExercises.length;
 
+    // NEW: Load and display notes
+    if (dailyNotesTextarea) { // Ensure the element exists before trying to access it
+        dailyNotesTextarea.value = loadDailyNotes(todayKey);
+    }
+
     // Update the <progress> element's value and max attributes
     dailyProgressBar.value = completedCount;
     dailyProgressBar.max = totalExercises;
@@ -302,6 +310,24 @@ function updateDailyProgressBar() {
 
     // Update the progress text
     dailyProgressText.textContent = `${completedCount}/${totalExercises} exercises complete (${percentage.toFixed(0)}%)`;
+}
+
+/**
+ * Loads notes for the current day from localStorage.
+ * @param {string} dateKey - The date key (e.g., 'YYYY-MM-DD').
+ * @returns {string} The saved notes, or an empty string if none exist.
+ */
+function loadDailyNotes(dateKey) {
+    return localStorage.getItem(`notes_${dateKey}`) || '';
+}
+
+/**
+ * Saves notes for the current day to localStorage.
+ * @param {string} dateKey - The date key (e.g., 'YYYY-MM-DD').
+ * @param {string} notes - The notes to save.
+ */
+function saveDailyNotes(dateKey, notes) {
+    localStorage.setItem(`notes_${dateKey}`, notes);
 }
 
 
@@ -636,6 +662,15 @@ document.addEventListener('DOMContentLoaded', () => {
             showTab(targetId); // This will handle visibility and active class for all tabs
         });
     });
+
+    // NEW: Save notes on button click
+    if (saveNotesBtn) { // Ensure the element exists
+        saveNotesBtn.addEventListener('click', () => {
+            const todayKey = new Date().toISOString().split('T')[0];
+            saveDailyNotes(todayKey, dailyNotesTextarea.value);
+            alert('Notes saved!'); // Simple confirmation
+        });
+    }
 
     // Initial load for Today's Routine
     isShowingScheduledDay = false; // Ensure flag is false on initial load
