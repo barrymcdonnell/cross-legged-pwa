@@ -46,92 +46,276 @@ const exercises = {
 const routine = [
     // Week 1 (Overall Index 0) - Weeks 1-2
     {weekLabel: "Week 1", days: [
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 0 (Monday)
-        null, // Day 1
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 2
-        null, // Day 3
-        4: {warmup: ["High Knees (30 seconds)",
+        { // Day 0 - Monday        
+            warmup: ["High Knees (30 seconds)",
                     "Leg Swings (Side-to-Side, 10 per leg)",
                     "Leg Swings (Front-to-Back, 10 per leg)",
                     "Deep Squat (hold 30 seconds)",
                     "Hip Circles (5 per direction, each hip)"
-                ],
-        exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'], // Day 4
-        },
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges']
+        }, 
+        null, // Day 1 - Tuesday
+        { // Day 2 - Wednesday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges']
+        }, 
+        null, // Day 3
+        { // Day 4 - Friday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges']
+        }, 
         null, // Day 5
         null  // Day 6
     ]},
     // Week 2 (Overall Index 1) - Weeks 1-2
     {weekLabel: "Week 2", days: [
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges'],
-        null,
-        null
+        { // Day 0 - Monday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges']
+        }, 
+        null, // Day 1 - Tuesday
+        { // Day 2 - Wednesday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges']
+        }, 
+        null, // Day 3
+        { // Day 4 - Friday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Clamshells', 'Glute Bridges']
+        }, 
+        null, // Day 5
+        null  // Day 6
     ]},
     // Week 3 (Overall Index 2) - Weeks 3-4
     {weekLabel: "Week 3", days: [
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
-        null,
-        null
+       { // Day 0 - Monday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
+        }, 
+        null, // Day 1 - Tuesday
+        { // Day 2 - Wednesday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
+        }, 
+        null, // Day 3
+        { // Day 4 - Friday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
+        }, 
+        null, // Day 5
+        null  // Day 6
     ]},
     // Week 4 (Overall Index 3) - Weeks 3-4
     {weekLabel: "Week 4", days: [
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
-        null,
-        null
+      { // Day 0 - Monday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
+        }, 
+        null, // Day 1 - Tuesday
+        { // Day 2 - Wednesday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
+        }, 
+        null, // Day 3
+        { // Day 4 - Friday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Clamshells', 'Glute Bridges'],
+        }, 
+        null, // Day 5
+        null  // Day 6
     ]},
     // Week 5 (Overall Index 4) - Weeks 5-6
     {weekLabel: "Week 5", days: [
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        null
+       { // Day 0 - Monday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 1 - Tuesday
+        { // Day 2 - Wednesday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 3
+        { // Day 4 - Friday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 5
+        null  // Day 6
     ]},
     // Week 6 (Overall Index 5) - Weeks 5-6
     {weekLabel: "Week 6", days: [
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        null
+       { // Day 0 - Monday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 1 - Tuesday
+        { // Day 2 - Wednesday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 3
+        { // Day 4 - Friday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 5
+        null  // Day 6
     ]},
     // Week 7 (Overall Index 6) - Weeks 7-8
     {weekLabel: "Week 7", days: [
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        null
+       { // Day 0 - Monday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 1 - Tuesday
+        { // Day 2 - Wednesday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 3
+        { // Day 4 - Friday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 5
+        null  // Day 6
     ]},
     // Week 8 (Overall Index 7) - Weeks 7-8
     {weekLabel: "Week 8", days: [
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        ['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
-        null,
-        null
-    ]}
-];
+        { // Day 0 - Monday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 1 - Tuesday
+        { // Day 2 - Wednesday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 3
+        { // Day 4 - Friday        
+            warmup: ["High Knees (30 seconds)",
+                    "Leg Swings (Side-to-Side, 10 per leg)",
+                    "Leg Swings (Front-to-Back, 10 per leg)",
+                    "Deep Squat (hold 30 seconds)",
+                    "Hip Circles (5 per direction, each hip)"
+            ],
+            exercises:['Butterfly Stretch', 'Figure Four Stretch', 'Low Lunge', 'Seated Forward Fold', 'Frog Pose', 'Clamshells', 'Glute Bridges', 'Side-Lying Leg Lifts'],
+        }, 
+        null, // Day 5
+        null  // Day 6
+    ]};
 
 const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
