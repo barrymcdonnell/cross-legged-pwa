@@ -278,25 +278,34 @@ main {
 
 /* Notes styling */
 #daily-notes-section {
-    margin-top: 10px;
-    padding: 15px;
+    margin-top: 20px; /* Keep some space above the entire notes section */
+    padding: 5px 15px 15px 15px; /* Reduced top padding (5px), keeping side/bottom (15px) */
     border: 1px solid #ddd;
     background-color: #f9f9f9;
+    border-radius: 8px; /* Added border-radius for consistency with other cards */
+}
+
+#daily-notes-section h4 {
+    margin-top: 10px; /* Reduced space between the top of the div and the h3 text */
+    margin-bottom: 5px; /* Reduced space between h3 and textarea */
+    font-size: 1.1em; /* Slightly adjusted font size if needed for compactness */
+    color: #333;
 }
 
 #daily-notes-textarea {
-    width: calc(100% - 10px); /* Adjust for padding/border */
-    min-height: 120px;
-    padding: 8px;
+    width: calc(100% - 16px); /* Full width minus combined left/right padding (8px + 8px) */
+    min-height: 70px; /* Approximate height for 3 rows of text */
+    padding: 8px; /* Consistent padding inside the textarea */
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-family: Arial, sans-serif; /* Match body font */
+    font-family: Arial, sans-serif;
     resize: vertical; /* Allow vertical resizing */
+    box-sizing: border-box; /* Crucial to include padding/border in the width calculation */
 }
 
 #save-notes-btn {
-    background-color: #000080; /* DarkBlue, matching your schedule buttons */
+    background-color: #000080;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -304,8 +313,8 @@ main {
     cursor: pointer;
     font-size: 1em;
     transition: background-color 0.3s ease;
-    width: 100%; /* Make it full width */
-    box-sizing: border-box; /* Include padding/border in width */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #save-notes-btn:hover {
