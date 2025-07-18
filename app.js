@@ -171,86 +171,88 @@ function getCurrentRoutineProgress() {
  * Loads exercises for the current day based on the routine.
  */
 function loadDailyRoutine() {
-    if (isShowingScheduledDay) {
-        // Prevent loadDailyRoutine from running if showExercisesForDay is active
-        // The content should already be set by showExercisesForDay
+    const exerciseList = document.getElementById('exercise-list');
+    const dailyProgressContainer = document.getElementById('daily-progress-container');
+    const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex } = getCurrentRoutineProgress();
+    const todayKey = new Date().toISOString().split('T')[0];
+
+    const currentDayData = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex];
+
+    if (!currentDayData) {
+        // Fallback for days beyond the routine or undefined days
+        exerciseList.innerHTML = '<p>No specific routine defined for today. Enjoy your day!</p>';
+        dailyProgressContainer.style.display = 'none';
         return;
     }
-    // 1. Get current routine progress only once
-    const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex, totalDaysElapsed } = getCurrentRoutineProgress();
-    const today = new Date();
-    const todayKey = today.toISOString().split('T')[0]; // YYYY-MM-DD for progress tracking
 
-    // Get DOM elements (assuming these are defined globally or passed in)
-    // Please ensure 'dateDisplay', 'currentWeekDisplay', 'currentDayOfWeekDisplay',
-    // 'exerciseList', 'dailyProgressContainer', 'dailyProgressBarContainer'
-    // are correctly linked to your HTML elements.
-    const dateDisplay = document.getElementById('date-display');
-    const currentWeekDisplay = document.getElementById('current-week-display'); // Assuming this is for "Week X"
-    const currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display'); // Assuming this is for "Day Y"
-    const exerciseList = document.getElementById('exercise-list'); // This should be the main container for exercises
-    const dailyProgressContainer = document.getElementById('daily-progress-container'); // The whole container for progress bar/text
-    const dailyProgressBarContainer = document.getElementById('daily-progress-bar-container'); // Just the bar container
+    const dailyWarmup = currentDayData.warmup || []; // Get warm-up exercises
+    const dailyExercises = currentDayData.exercises || []; // Get main exercises
 
-    // 2. Update date and week/day displays
-    dateDisplay.textContent = today.toLocaleDateString('en-IE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    currentWeekDisplay.textContent = `Week ${currentRoutineWeekIndex + 1}`;
-    currentDayOfWeekDisplay.textContent = `${totalDaysElapsed + 1}`; // Display sequential day
+    let htmlContent = '';
 
-    // Get the routine for the current week and day
-    const currentWeekRoutine = routine[currentRoutineWeekIndex];
-    let dailyExercises = (currentWeekRoutine && currentWeekRoutine.days) ? currentWeekRoutine.days[currentDayInWeekIndex] : null;
-
-    // 3. Clear existing exercise list
-    exerciseList.innerHTML = '';
-
-    // 4. Check if there are exercises for today
-    if (dailyExercises && dailyExercises.length > 0) {
-        const ul = document.createElement('ul');
-        const dailyProgress = getDailyProgress(todayKey); // Ensure getDailyProgress exists and works
-
-        dailyExercises.forEach(exerciseName => {
-            const li = document.createElement('li');
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = `exercise-${exerciseName.replace(/\s/g, '-')}`; // Unique ID
-            checkbox.checked = dailyProgress.includes(exerciseName);
-            checkbox.dataset.exerciseName = exerciseName; // Store name for easy retrieval
-
-            const label = document.createElement('label');
-            label.htmlFor = checkbox.id;
-            // Assuming 'exercises' is a global object mapping names to descriptions
-            label.innerHTML = `<strong>${exerciseName}</strong><br><small>${exercises[exerciseName] || 'Description not available'}</small>`;
-
-            if (checkbox.checked) {
-                li.classList.add('completed');
-            }
-
-            li.appendChild(checkbox);
-            li.appendChild(label);
-            ul.appendChild(li);
-
-            checkbox.addEventListener('change', (event) => {
-                toggleExerciseComplete(exerciseName, event.target.checked); // Ensure toggleExerciseComplete exists
-                li.classList.toggle('completed', event.target.checked);
-                updateDailyProgressBar(); // Ensure updateDailyProgressBar exists
-            });
+    // NEW: Display Warm-up Exercises
+    if (dailyWarmup.length > 0) {
+        htmlContent += '<h3>Warm-up</h3>';
+        htmlContent += '<ul class="warmup-list">'; // Add a class for potential styling
+        dailyWarmup.forEach(exercise => {
+            htmlContent += `<li><i class="fas fa-play-circle warm-up-icon"></i> ${exercise}</li>`; // Added an icon
         });
-        exerciseList.appendChild(ul);
-
-        // Show progress bar and text if exercises are scheduled
-        dailyProgressContainer.style.display = 'block'; // Make sure this is the correct ID for the entire container
-
-    } else {
-        // No exercises planned for today
-        exerciseList.innerHTML = '<p>No exercises planned for today. Enjoy your rest day!</p>';
-        dailyProgressContainer.style.display = 'none'; // Hide progress bar and text
+        htmlContent += '</ul>';
     }
 
-    // 5. Always update progress bar and summary, and load schedule
-    updateDailyProgressBar(); // Initial update (will handle hidden state if no exercises)
-    updateWeeklySummary(); // Update summary on load
-    loadWeeklySchedule(); // Load weekly schedule too
+    // Display Main Exercises
+    if (dailyExercises.length > 0) {
+        htmlContent += '<h3>Main Routine</h3>'; // Changed to "Main Routine" for clarity
+        htmlContent += '<ul class="exercise-checklist">';
+        dailyExercises.forEach((exercise, index) => {
+            const isCompleted = getDailyProgress(todayKey).includes(exercise);
+            const checked = isCompleted ? 'checked' : '';
+            const listItemClass = isCompleted ? 'completed' : '';
+            htmlContent += `
+                <li class="${listItemClass}">
+                    <label>
+                        <input type="checkbox" data-exercise="${exercise}" ${checked} />
+                        ${exercise}
+                    </label>
+                </li>
+            `;
+        });
+        htmlContent += '</ul>';
+    } else {
+        // No main exercises planned (rest day or undefined)
+        htmlContent += '<p>No main exercises planned for today. Enjoy your rest day!</p>';
+        dailyProgressContainer.style.display = 'none'; // Hide progress bar for rest days
+    }
+
+    exerciseList.innerHTML = htmlContent; // Update the display
+
+    // Only show progress bar if there are main exercises
+    if (dailyExercises.length > 0) {
+        dailyProgressContainer.style.display = 'block';
+    } else {
+        dailyProgressContainer.style.display = 'none';
+    }
+
+    // After updating exercise list, ensure checkboxes are interactive
+    document.querySelectorAll('#exercise-list input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', (event) => {
+            const exerciseName = event.target.dataset.exercise;
+            toggleExerciseComplete(exerciseName);
+            updateDailyProgressBar(); // Update progress bar when an exercise is ticked
+            // Update the list item class immediately
+            const listItem = event.target.closest('li');
+            if (listItem) {
+                listItem.classList.toggle('completed', event.target.checked);
+            }
+        });
+    });
+
+    updateDailyProgressBar();
+    updateWeeklyOverview();
+    // NEW: Load and display notes
+    if (dailyNotesTextarea) {
+        dailyNotesTextarea.value = loadDailyNotes(todayKey);
+    }
 }
 
 /**
