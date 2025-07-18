@@ -503,17 +503,34 @@ function toggleExerciseComplete(exerciseName, isCompleted) {
 function updateDailyProgressBar() {
     const dailyProgressBar = document.getElementById('daily-progress-bar');
     const dailyProgressText = document.getElementById('daily-progress-text');
+    const dailyProgressContainer = document.getElementById('daily-progress-container'); // Get this element too for hiding/showing
 
-    // Correctly destructure and use the new variable names
     const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex } = getCurrentRoutineProgress();
     const todayKey = new Date().toISOString().split('T')[0];
 
-    // Ensure the array access is safe, using the new variable names
-    const currentDayExercises = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex] || []; // FIX IS HERE
-    const completedExercises = getDailyProgress(todayKey);
+    // Get the specific day's data from the routine
+    const currentDayData = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex];
 
-    const totalExercises = currentDayExercises.length;
+    // Handle cases where there's no routine data for the day (e.g., rest day)
+    if (!currentDayData) {
+        dailyProgressBarContainer.style.display = 'none'; // Hide the progress bar
+        exerciseList.innerHTML = '<p>No specific routine defined for today. Enjoy your day!</p>';
+        if (dailyNotesTextarea) {
+             dailyNotesTextarea.value = loadDailyNotes(todayKey); // Still load notes if available
+        }
+        return; // Exit the function as there's no workout
+    }
+
+    // Safely get lengths of warmup and exercises arrays, defaulting to 0 if they don't exist
+    const warmupCount = currentDayData.warmup ? currentDayData.warmup.length : 0;
+    const exerciseCount = currentDayData.exercises ? currentDayData.exercises.length : 0;
+
+    const totalExercises = warmupCount + exerciseCount;
+    const completedExercises = getDailyProgress(todayKey); // This should return an array of completed exercises
     const completedCount = completedExercises.length;
+
+    // Show the progress bar container if there's a routine
+    dailyProgressContainer.style.display = 'block';
 
     // NEW: Load and display notes
     if (dailyNotesTextarea) { // Ensure the element exists before trying to access it
@@ -522,17 +539,19 @@ function updateDailyProgressBar() {
 
     // Update the <progress> element's value and max attributes
     dailyProgressBar.value = completedCount;
-    dailyProgressBar.max = totalExercises;
-
-    let percentage = 0;
+    
+    // Crucial check to prevent non-finite 'max' values
     if (totalExercises > 0) {
-        percentage = (completedCount / totalExercises) * 100;
+        dailyProgressBar.max = totalExercises;
+        let percentage = (completedCount / totalExercises) * 100;
+        dailyProgressText.textContent = `${completedCount}/${totalExercises} exercises complete (${percentage.toFixed(0)}%)`;
+    } else {
+        // If totalExercises is 0 (e.g., empty arrays, though your routine data has items)
+        dailyProgressBar.max = 1; // Set a default max to avoid errors, effectively making it 0%
+        dailyProgressBar.value = 0;
+        dailyProgressText.textContent = `No exercises planned for today.`;
     }
-
-    // Update the progress text
-    dailyProgressText.textContent = `${completedCount}/${totalExercises} exercises complete (${percentage.toFixed(0)}%)`;
 }
-
 /**
  * Loads notes for the current day from localStorage.
  * @param {string} dateKey - The date key (e.g., 'YYYY-MM-DD').
