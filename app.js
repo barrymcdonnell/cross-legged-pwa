@@ -26,6 +26,18 @@ let currentDisplayWeek = 0; // 0-indexed for program weeks
 const dailyNotesTextarea = document.getElementById('daily-notes-textarea');
 const saveNotesBtn = document.getElementById('save-notes-btn');
 
+function displayCurrentDate() {
+    // Current date and day of the week
+    const today = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = today.toLocaleDateString(undefined, options); // 'undefined' uses user's locale
+
+    // Update the date display element
+    if (dateDisplay) { // Check if the element was found
+        dateDisplay.textContent = formattedDate;
+    }
+}
+
 // --- CORE APPLICATION LOGIC ---
 
 // Exercise Data - Define all exercises with their details
@@ -903,6 +915,12 @@ function showTab(tabId) {
 document.addEventListener('DOMContentLoaded', () => {
     //loadDailyRoutine();
     resetWeekButton.addEventListener('click', resetAllProgress);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // ... your existing DOMContentLoaded code ...
+        showTab('daily-routine-section'); // Make sure this is called for initial load
+        displayCurrentDate(); // <--- Call here to show date on initial load
+    });
 
     // Add event listeners for navbar tabs
     document.querySelectorAll('.nav-tab').forEach(tab => {
