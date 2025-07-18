@@ -255,26 +255,6 @@ main {
     }
 }
 
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-    .navbar {
-        padding: 5px 0; /* Keep consistent padding */
-        flex-direction: row;
-    }
-    .nav-tab {
-        padding: 6px 3px;
-        font-size: 0.75em;
-    }
-    .nav-tab i {
-        font-size: 1.2em;
-    }
-    .nav-tab span {
-        font-size: 0.8em;
-    }
-    body {
-        padding-bottom: 60px; /* Adjust padding for smaller screens if navbar height changes */
-    }
-}
 
 /* Notes styling */
 #daily-notes-section {
@@ -319,6 +299,56 @@ main {
 
 #save-notes-btn:hover {
     background-color: #000060; /* Darker blue on hover */
+}
+
+/* NEW: Warm-up list styling */
+.warmup-list {
+    list-style: none; /* Remove default bullet points */
+    padding-left: 0;
+    margin-bottom: 20px; /* Space below warm-up list */
+}
+
+.warmup-list li {
+    background-color: #e6f7ff; /* Light blue background for warm-up items */
+    border-left: 5px solid #3498db; /* Blue left border */
+    margin-bottom: 8px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    font-size: 0.95em;
+    color: #333;
+}
+
+.warm-up-icon {
+    margin-right: 10px;
+    color: #3498db; /* Blue icon */
+}
+
+/* Adjust for the new "Main Routine" heading */
+#daily-routine-section h3:nth-of-type(2) { /* Targets the second h3, which is "Main Routine" */
+    margin-top: 25px; /* Add more space between warm-up and main routine */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 5px 0; /* Keep consistent padding */
+        flex-direction: row;
+    }
+    .nav-tab {
+        padding: 6px 3px;
+        font-size: 0.75em;
+    }
+    .nav-tab i {
+        font-size: 1.2em;
+    }
+    .nav-tab span {
+        font-size: 0.8em;
+    }
+    body {
+        padding-bottom: 60px; /* Adjust padding for smaller screens if navbar height changes */
+    }
 }
 
 /* Ensure content doesn't get hidden under the header */
