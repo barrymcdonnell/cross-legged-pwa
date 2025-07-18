@@ -316,6 +316,8 @@ const routine = [
         null, // Day 5
         null  // Day 6
     ]}
+    ];
+;
 
 const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
