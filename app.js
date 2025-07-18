@@ -344,6 +344,10 @@ function getCurrentRoutineProgress() {
     const currentWeekIndex = Math.floor(totalDaysElapsed / WEEK_LENGTH); // Assuming WEEK_LENGTH is 7
     const currentDayInWeek = totalDaysElapsed % WEEK_LENGTH; // Day index within the current week (0-6)
 
+    console.log('getCurrentRoutineProgress - totalDaysElapsed:', totalDaysElapsed); // ADD THIS
+    console.log('getCurrentRoutineProgress - currentWeekIndex:', currentWeekIndex); // ADD THIS
+    console.log('getCurrentRoutineProgress - currentDayInWeek:', currentDayInWeek); // ADD THIS
+    
     return {
         week: currentWeekIndex,
         day: currentDayInWeek, // This will be 0-indexed (Mon=0, Tue=1, etc. relative to program start day)
@@ -360,8 +364,17 @@ function loadDailyRoutine() {
     const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex } = getCurrentRoutineProgress();
     const todayKey = new Date().toISOString().split('T')[0];
 
+    // ADD THESE LOGS
+    console.log('loadDailyRoutine - Attempting to load for:');
+    console.log('  currentRoutineWeekIndex:', currentRoutineWeekIndex);
+    console.log('  currentDayInWeekIndex:', currentDayInWeekIndex);
+    // End add
+    
     const currentDayData = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex];
 
+    // ADD THIS LOG
+    console.log('  currentDayData fetched:', currentDayData);
+    
     if (!currentDayData) {
         // Fallback for days beyond the routine or undefined days
         exerciseList.innerHTML = '<p>No specific routine defined for today. Enjoy your day!</p>';
@@ -437,6 +450,20 @@ function loadDailyRoutine() {
     if (dailyNotesTextarea) {
         dailyNotesTextarea.value = loadDailyNotes(todayKey);
     }
+}
+
+// --- In updateWeeklyOverview() ---
+function updateWeeklyOverview() {
+    const currentWeekDisplay = document.getElementById('current-week-display');
+    const currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display');
+
+    const { week, day } = getCurrentRoutineProgress(); // Gets current week and day indices
+
+    console.log('updateWeeklyOverview - Displaying week:', week, 'day:', day); // ADD THIS
+
+    // Update the display elements
+    currentWeekDisplay.textContent = `Week ${week + 1}`; // Display as 1-indexed week
+    currentDayOfWeekDisplay.textContent = day + 1; // Display as 1-indexed day
 }
 
 /**
