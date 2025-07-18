@@ -428,7 +428,8 @@ function loadDailyRoutine() {
     document.querySelectorAll('#exercise-list input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', (event) => {
             const exerciseName = event.target.dataset.exercise;
-            toggleExerciseCompletion(todayKey, exerciseName, event.target.checked);
+            const todayKey = new Date().toISOString().split('T')[0]; 
+            toggleExerciseComplete(todayKey, exerciseName, event.target.checked);
         });
     });
     
@@ -490,28 +491,22 @@ function getDailyProgress(dateKey) {
 
 /**
  * Saves/updates progress for a specific exercise on the current day.
+ * @param {string} dateKey - The date string (e.g., 'YYYY-MM-DD') for which to save progress.
  * @param {string} exerciseName - Name of the exercise.
  * @param {boolean} isCompleted - True if completed, false if unchecked.
  */
-function toggleExerciseComplete(exerciseName, isCompleted) {
-    const todayKey = new Date().toISOString().split('T')[0];
+function toggleExerciseComplete(dateKey, exerciseName, isCompleted) { 
     const progress = JSON.parse(localStorage.getItem('dailyProgress')) || {};
-    let dailyCompleted = progress[todayKey] || [];
+    let dailyCompleted = progress[dateKey] || []; // Use the passed-in dateKey
 
-    console.log('toggleExerciseComplete - Initial dailyCompleted for', dateKey, ':', dailyCompleted); // ADD THIS
-    console.log('toggleExerciseComplete - Toggling:', exerciseName, 'to completed status:', isCompleted); // ADD THIS
-    
     if (isCompleted && !dailyCompleted.includes(exerciseName)) {
         dailyCompleted.push(exerciseName);
     } else if (!isCompleted) {
         dailyCompleted = dailyCompleted.filter(name => name !== exerciseName);
     }
 
-    progress[todayKey] = dailyCompleted;
+    progress[dateKey] = dailyCompleted;
     localStorage.setItem('dailyProgress', JSON.stringify(progress));
-
-    console.log('toggleExerciseCompletion - Updated dailyCompleted for', dateKey, ':', dailyCompleted); // ADD THIS
-    console.log('toggleExerciseCompletion - localStorage after update:', JSON.parse(localStorage.getItem('dailyProgress'))); // ADD THIS
 
     loadDailyRoutine();
 }
