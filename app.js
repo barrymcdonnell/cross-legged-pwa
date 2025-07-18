@@ -277,8 +277,12 @@ function toggleExerciseComplete(exerciseName, isCompleted) {
  * Updates the daily progress bar and text.
  */
 function updateDailyProgressBar() {
-    const { week, dayOfWeek } = getCurrentRoutineProgress();
+    const dailyProgressBar = document.getElementById('daily-progress-bar'); // This now correctly targets your <progress> element
+    const dailyProgressText = document.getElementById('daily-progress-text');
+
+    const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex } = getCurrentRoutineProgress(); // Use the object destructuring
     const todayKey = new Date().toISOString().split('T')[0];
+    
     // Ensure the array access is safe
     const currentDayExercises = routine[week]?.days?.[dayOfWeek] || [];
     const completedExercises = getDailyProgress(todayKey);
@@ -286,13 +290,17 @@ function updateDailyProgressBar() {
     const totalExercises = currentDayExercises.length;
     const completedCount = completedExercises.length;
 
+    dailyProgressBar.value = completedCount;
+    dailyProgressBar.max = totalExercises;
+    
     let percentage = 0;
     if (totalExercises > 0) {
         percentage = (completedCount / totalExercises) * 100;
     }
 
     dailyProgressBar.style.width = `${percentage}%`;
-    dailyProgressText.textContent = `${completedCount}/${totalExercises} exercises complete`;
+    dailyProgressText.textContent = `${completedCount}/${totalExercises} exercises complete (${percentage.toFixed(0)}%)`;
+    // dailyProgressText.textContent = `${completedCount}/${totalExercises} exercises complete`;
 }
 
 
