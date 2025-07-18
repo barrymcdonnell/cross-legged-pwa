@@ -415,10 +415,15 @@ function loadDailyRoutine() {
         currentDayData.exercises.forEach((exercise, index) => {
             const isCompleted = completedExercises.includes(exercise);
             const checkedAttribute = isCompleted ? 'checked' : '';
+
+            const exerciseDetail = exercises[exercise] || 'No details available.'; 
+            
             htmlContent += `
                 <li>
                     <input type="checkbox" id="exercise-${index}" value="${exercise}" ${checkedAttribute} data-exercise="${exercise}">
-                    <label for="exercise-${index}">${exercise}</label>
+                    <label for="exercise-${index}">${exercise}
+                    <br>
+                        <span class="exercise-detail">${exerciseDetail}</span></label>
                 </li>
             `;
         });
