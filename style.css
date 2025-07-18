@@ -276,6 +276,42 @@ main {
     }
 }
 
+/* Notes styling */
+#daily-notes-section {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+#daily-notes-textarea {
+    width: calc(100% - 10px); /* Adjust for padding/border */
+    min-height: 120px;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: Arial, sans-serif; /* Match body font */
+    resize: vertical; /* Allow vertical resizing */
+}
+
+#save-notes-btn {
+    background-color: #000080; /* DarkBlue, matching your schedule buttons */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    width: 100%; /* Make it full width */
+    box-sizing: border-box; /* Include padding/border in width */
+}
+
+#save-notes-btn:hover {
+    background-color: #000060; /* Darker blue on hover */
+}
+
 /* Ensure content doesn't get hidden under the header */
 @media (min-width: 769px) { /* Adjust breakpoint as needed */
     main {
