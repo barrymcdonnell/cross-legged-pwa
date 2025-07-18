@@ -483,8 +483,8 @@ function updateWeeklyOverview() {
 function getDailyProgress(dateKey) {
     const progress = JSON.parse(localStorage.getItem('dailyProgress')) || {};
     console.log('getDailyProgress - dateKey:', dateKey); // ADD THIS
-    console.log('getDailyProgress - progressData:', progressData); // ADD THIS
-    console.log('getDailyProgress - returning:', progressData[dateKey] || []); // ADD THIS
+    console.log('getDailyProgress - progress:', progress); // ADD THIS
+    console.log('getDailyProgress - returning:', progress[dateKey] || []); // ADD THIS
     return progress[dateKey] || [];
 }
 
