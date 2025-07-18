@@ -330,6 +330,85 @@ main {
     margin-top: 25px; /* Add more space between warm-up and main routine */
 }
 
+/* --- General Section Styling --- */
+.warmup-section,
+.main-routine-section {
+    padding: 15px;
+    margin-bottom: 20px; /* Space between sections */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.warmup-section h3,
+.main-routine-section h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.warmup-section ul,
+.main-routine-section ul {
+    list-style: none; /* Remove default bullet points */
+    padding: 0;
+    margin: 0;
+}
+
+.warmup-section li,
+.main-routine-section li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.warmup-section li:last-child,
+.main-routine-section li:last-child {
+    border-bottom: none; /* No border on the last item */
+}
+
+
+/* --- Specific Warmup Styling --- */
+.warmup-section {
+    background-color: #f0f8ff; /* Light blue/lavender background */
+    border: 1px solid #cceeff;
+    color: #555;
+}
+
+.warmup-section h3 {
+    color: #007bff; /* Blue heading */
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+/* --- Specific Main Routine Styling --- */
+.main-routine-section {
+    background-color: #f9fff9; /* Very light green background */
+    border: 1px solid #d4edda;
+    color: #333;
+}
+
+.main-routine-section h3 {
+    color: #28a745; /* Green heading */
+    border-bottom: 2px solid #28a745;
+    padding-bottom: 5px;
+}
+
+/* Checkbox specific styling */
+.exercise-checklist li {
+    display: flex; /* Align checkbox and label */
+    align-items: center;
+    gap: 10px; /* Space between checkbox and label */
+}
+
+.exercise-checklist input[type="checkbox"] {
+    transform: scale(1.2); /* Make checkbox slightly larger */
+    cursor: pointer;
+}
+
+.exercise-checklist label {
+    flex-grow: 1; /* Allow label to take up remaining space */
+    cursor: pointer;
+}
+
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
     .navbar {
