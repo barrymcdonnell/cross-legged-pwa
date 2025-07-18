@@ -194,58 +194,51 @@ main {
 
 /* Progress bar styling */
 #daily-progress-bar-container {
-    /* This div wraps the progress bar and ensures it has space */
-    width: 100%; /* Make it span the available width */
+    width: 100%;
     height: 10px; /* Give space for the progress bar */
-    background-color: #e0e0e0; /* Background color for the track */
+    background-color: #e0e0e0; /* This will act as the track background for all browsers */
     border-radius: 5px;
     margin-top: 10px;
     overflow: hidden; /* Important for border-radius on the native bar */
 }
 
 #daily-progress-bar {
-    /* Styles for the native <progress> element */
-    width: 100%; /* It should fill its container */
-    height: 100%; /* It should fill its container */
-    -webkit-appearance: none; /* For WebKit browsers (Chrome, Safari) */
-    -moz-appearance: none; /* For Mozilla Firefox */
-    appearance: none; /* Standard property */
-    border: none; /* Remove default border */
-    background-color: transparent;
+    /* Base styles for the <progress> element itself */
+    width: 100%;
+    height: 100%; /* Make it fill its container */
+    -webkit-appearance: none; /* Remove default WebKit styling */
+    -moz-appearance: none;    /* Remove default Mozilla styling */
+    appearance: none;         /* Standard property */
+    border: none;             /* Remove any default borders */
+    /* background-color: transparent; <-- REMOVE THIS LINE if you want #e0e0e0 from the container to show through for Firefox track */
     border-radius: 5px; /* Match the container's border-radius */
 }
 
-/* Style the track (the "empty" part of the bar) */
+/* Styles for the TRACK (the empty part) for WebKit browsers */
 #daily-progress-bar::-webkit-progress-bar {
-    background-color: #e0e0e0;
+    background-color: #e0e0e0; /* Light gray for the track */
     border-radius: 5px;
 }
 
-#daily-progress-bar::-moz-progress-bar { /* Firefox does not use a track pseudo-element, relies on background */
-    background-color: #e0e0e0; /* This won't work in Firefox, need to style the bar itself */
-}
-
-/* Styles for the VALUE (the filled part) */
+/* Styles for the VALUE (the filled part) for WebKit browsers */
 #daily-progress-bar::-webkit-progress-value {
     background-color: #4CAF50; /* Green fill for progress */
     border-radius: 5px;
     transition: width 0.5s ease-in-out; /* Smooth transition for visual updates */
 }
 
+/* Styles for the VALUE (the filled part) for Mozilla Firefox */
 #daily-progress-bar::-moz-progress-bar {
-    /* For Firefox, this targets the *filled* part of the progress bar */
     background-color: #4CAF50; /* Green fill for progress */
     border-radius: 5px;
     transition: width 0.5s ease-in-out; /* Smooth transition */
 }
 
-#daily-progress-bar::-moz-progress-bar { /* Firefox handles track styling differently */
-    /* Firefox's ::-moz-progress-bar targets the value, not the track.
-       The track styling for Firefox is typically handled by the background-color of the <progress> element itself,
-       which we've set to transparent above, assuming a container background will show through.
-       If you want a distinct track color in Firefox, you might need to set it on #daily-progress-bar directly,
-       but this can conflict with the value styling for WebKit. A common trick is to ensure the container has the track color.
-    */
+/* Fallback: Not strictly necessary if container background is set, but can be a good safeguard */
+/* This rule is generally for older browsers or specific edge cases. */
+#daily-progress-bar:not([value])::-webkit-progress-bar,
+#daily-progress-bar:not([value])::-moz-progress-bar {
+    background-color: #e0e0e0; /* Ensures a background if the value is not set or supported */
 }
 
 #daily-progress-text {
@@ -253,13 +246,6 @@ main {
     margin-top: 5px;
     font-size: 0.9em;
     color: #555;
-}
-
-/* Fallback for browsers that don't support pseudo-elements well, or to ensure visibility */
-/* This is less common but can help if previous pseudo-element styling fails */
-#daily-progress-bar:not([value])::-webkit-progress-bar,
-#daily-progress-bar:not([value])::-moz-progress-bar {
-    background-color: #e0e0e0; /* Ensures a background if the value is not set or supported */
 }
 
 /* Responsive adjustment for very small screens */
