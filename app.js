@@ -23,13 +23,6 @@ const DEFAULT_WEEKLY_ROUTINE_PATTERN = [1, 3, 5];
 
 let currentDisplayWeek = 0; // 0-indexed for program weeks
 
-const dailyNotesTextarea = document.getElementById('daily-notes-textarea');
-const saveNotesBtn = document.getElementById('save-notes-btn');
-
-const currentWeekDisplay = document.getElementById('current-week-display'); 
-const currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display'); 
-
-
 // --- CORE APPLICATION LOGIC ---
 
 // Exercise Data - Define all exercises with their details
@@ -334,7 +327,9 @@ const dailyProgressBar = document.getElementById('daily-progress-bar');
 const dailyProgressText = document.getElementById('daily-progress-text');
 const summaryContent = document.getElementById('summary-content');
 const resetWeekButton = document.getElementById('reset-week-button');
-const weekScheduleContent = document.getElementById('week-schedule-content'); // NEW
+const weekScheduleContent = document.getElementById('week-schedule-content');
+const dailyNotesTextarea = document.getElementById('daily-notes-textarea');
+const saveNotesBtn = document.getElementById('save-notes-btn');
 
 // --- Helper Functions ---
 
@@ -463,8 +458,15 @@ function loadDailyRoutine() {
     document.querySelectorAll('#exercise-list input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', (event) => {
             const exerciseName = event.target.dataset.exercise;
-            const todayKey = new Date().toISOString().split('T')[0]; 
-            toggleExerciseComplete(todayKey, exerciseName, event.target.checked);
+            const isChecked = event.target.checked;
+            toggleExerciseComplete(todayKey, exerciseName, isChecked); // Correct arguments
+            updateDailyProgressBar(); // Update progress bar when an exercise is ticked
+            
+            // Update the list item class immediately for visual feedback
+            const listItem = event.target.closest('li');
+            if (listItem) {
+                listItem.classList.toggle('completed', isChecked);
+            }
         });
     });
     
@@ -475,23 +477,8 @@ function loadDailyRoutine() {
         dailyProgressContainer.style.display = 'none';
     }
 
-    // After updating exercise list, ensure checkboxes are interactive
-    document.querySelectorAll('#exercise-list input[type="checkbox"]').forEach(checkbox => {
-        checkbox.addEventListener('change', (event) => {
-            const exerciseName = event.target.dataset.exercise;
-            toggleExerciseComplete(exerciseName);
-            updateDailyProgressBar(); // Update progress bar when an exercise is ticked
-            // Update the list item class immediately
-            const listItem = event.target.closest('li');
-            if (listItem) {
-                listItem.classList.toggle('completed', event.target.checked);
-            }
-        });
-    });
-
     updateDailyProgressBar();
     updateWeeklyOverview();
-    // NEW: Load and display notes
     if (dailyNotesTextarea) {
         dailyNotesTextarea.value = loadDailyNotes(todayKey);
     }
