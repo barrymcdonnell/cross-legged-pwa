@@ -376,6 +376,8 @@ function getCurrentRoutineProgress() {
 function loadDailyRoutine() {
     const exerciseList = document.getElementById('exercise-list');
     const dailyProgressContainer = document.getElementById('daily-progress-container');
+    const dailyNotesSection = document.getElementById('daily-notes-section'); // <--- Make sure you have an ID for your notes container
+    
     const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex } = getCurrentRoutineProgress();
     const todayKey = new Date().toISOString().split('T')[0];
 
