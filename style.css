@@ -8,7 +8,7 @@ body {
 }
 
 header {
-    background: linear-gradient(to right, #000080, #87CEEB); /* Navy to Sky Blue */
+    background: linear-gradient(to right, 87CEEB, #000080, #87CEEB); /* Navy to Sky Blue */
     color: #F8F8F8; /* Cream text */
     padding: 1em 0;
     text-align: center;
@@ -34,7 +34,7 @@ header h1 {
     display: flex;
     justify-content: space-around; /* Distribute items evenly */
     align-items: center;
-    background: linear-gradient(to right, #000080, #87CEEB); /* Navy to Sky Blue */
+    background-color: linear-gradient(to right, #87CEEB, #000080, #87CEEB); /* Navy to Sky Blue */
     padding: 5px 2px; /* Reduced padding for compact look */
     position: fixed; /* Fixed position */
     bottom: 0; /* Stick to the bottom */
@@ -273,7 +273,7 @@ main {
 }
 
 #daily-notes-textarea {
-    width: calc(100% - 16px); /* Full width minus combined left/right padding (8px + 8px) */
+    width: calc(100% - 8px); /* Full width minus combined left/right padding (8px + 8px) */
     min-height: 70px; /* Approximate height for 3 rows of text */
     padding: 8px; /* Consistent padding inside the textarea */
     margin-bottom: 10px;
@@ -285,8 +285,8 @@ main {
 }
 
 #save-notes-btn {
-    background-color: #000080;
-    color: white;
+    background-color:linear-gradient(to right, 87CEEB, #000080, #87CEEB); /* Navy to Sky Blue */
+    color: #F8F8F8;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
