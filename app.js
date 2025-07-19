@@ -386,7 +386,7 @@ function loadDailyRoutine() {
     }
     if (currentDayOfWeekDisplay) {
         // Using dayNames array for clarity (e.g., 'Friday')
-        currentDayOfWeekDisplay.textContent = dayNames[currentDayInWeekIndex]; 
+        currentDayOfWeekDisplay.textContent = `Day ${currentDayInWeekIndex + 1} (${dayNames[currentDayInWeekIndex]})`;  
         // Or if you prefer 'Day 5':
         // currentDayOfWeekDisplay.textContent = `Day ${currentDayInWeekIndex + 1}`;
     }
