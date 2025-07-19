@@ -47,8 +47,8 @@ header h1 {
 }
 
 .nav-tab {
-    background-color: linear-gradient(to right, #87CEEB, #000080, #87CEEB); /* Navy to Sky Blue */
-    color: #F8F8F8;;
+    background-color: #333;
+    color: #F8F8F8;
     border: none;
     padding: 8px 5px; /* Adjust padding for icon + text */
     cursor: pointer;
@@ -79,7 +79,7 @@ header h1 {
 }
 
 .nav-tab.active {
-    background-color: #000080; /* Active tab color (DarkBlue) */
+    background-color: linear-gradient(to right, #87CEEB, #000080, #87CEEB); /* Navy to Sky Blue */
     color: white;
     font-weight: bold;
     border-radius: 8px;
