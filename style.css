@@ -8,8 +8,8 @@ body {
 }
 
 header {
-    background-color: #000080; /* DarkBlue */
-    color: white; /* White text for header */
+    background: linear-gradient(to right, #000080, #87CEEB); /* Navy to Sky Blue */
+    color: #F8F8F8; /* Cream text */
     padding: 1em 0;
     text-align: center;
     position: sticky;
@@ -20,13 +20,13 @@ header {
 
 header h1 {
     margin-bottom: 5px;
-    color: white; /* Explicitly set h1 color in header to white */
+    color: #F8F8F8; /* Explicitly set h1 color in header to white */
 }
 
 #date-display {
     font-size: 0.9em;
     margin-top: 5px;
-    color: white; /* Explicitly set date display color in header to white */
+    color: #F8F8F8; /* Explicitly set date display color in header to white */
 }
 
 /* NEW: Navbar Styling - BOTTOM FIXED */
