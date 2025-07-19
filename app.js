@@ -387,6 +387,7 @@ function loadDailyRoutine() {
         // Fallback for days beyond the routine or undefined days
         exerciseList.innerHTML = '<p>No specific routine defined for today. Enjoy your day!</p>';
         dailyProgressContainer.style.display = 'none';
+        dailyNotesSection.style.display = 'none';
         return;
     }
 
