@@ -26,6 +26,8 @@ let currentDisplayWeek = 0; // 0-indexed for program weeks
 const dailyNotesTextarea = document.getElementById('daily-notes-textarea');
 const saveNotesBtn = document.getElementById('save-notes-btn');
 
+const currentWeekDisplay = document.getElementById('current-week-display'); 
+const currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display'); 
 
 
 // --- CORE APPLICATION LOGIC ---
@@ -382,6 +384,17 @@ function loadDailyRoutine() {
     const todayKey = new Date().toISOString().split('T')[0];
 
     const currentDayData = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex];
+
+    // Always display the calculated week and day numbers/names
+    if (currentWeekDisplay) {
+        currentWeekDisplay.textContent = `Week ${currentRoutineWeekIndex + 1}`;
+    }
+    if (currentDayOfWeekDisplay) {
+        // Using dayNames array for clarity (e.g., 'Friday')
+        currentDayOfWeekDisplay.textContent = dayNames[currentDayInWeekIndex]; 
+        // Or if you prefer 'Day 5':
+        // currentDayOfWeekDisplay.textContent = `Day ${currentDayInWeekIndex + 1}`;
+    }
     
     if (!currentDayData) {
         // Fallback for days beyond the routine or undefined days
