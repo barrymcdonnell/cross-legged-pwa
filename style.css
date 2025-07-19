@@ -8,7 +8,7 @@ body {
 }
 
 header {
-    background: linear-gradient(to right, #87CEEB, #000080, #87CEEB); /* Navy to Sky Blue */
+    background: linear-gradient(to right, #000080, #87CEEB); /* Navy to Sky Blue */
     color: #F8F8F8; /* Cream text */
     padding: 1em 0;
     text-align: center;
@@ -79,8 +79,8 @@ header h1 {
 }
 
 .nav-tab.active {
-    background-color: linear-gradient(to right, #87CEEB, #000080, #87CEEB); /* Navy to Sky Blue */
-    color: white;
+    background-color: #000080;
+    color: #F8F8F8;
     font-weight: bold;
     border-radius: 8px;
 }
