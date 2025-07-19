@@ -315,7 +315,7 @@ const routine = [
     ]}
     ];
 
-const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 // DOM Elements
 const dateDisplay = document.getElementById('date-display');
@@ -356,9 +356,9 @@ function getCurrentRoutineProgress() {
     const currentWeekIndex = Math.floor(totalDaysElapsed / WEEK_LENGTH); // Assuming WEEK_LENGTH is 7
     const currentDayInWeek = totalDaysElapsed % WEEK_LENGTH; // Day index within the current week (0-6)
 
-    console.log('getCurrentRoutineProgress - totalDaysElapsed:', totalDaysElapsed); // ADD THIS
-    console.log('getCurrentRoutineProgress - currentWeekIndex:', currentWeekIndex); // ADD THIS
-    console.log('getCurrentRoutineProgress - currentDayInWeek:', currentDayInWeek); // ADD THIS
+    console.log('getCurrentRoutineProgress - totalDaysElapsed:', totalDaysElapsed); 
+    console.log('getCurrentRoutineProgress - currentWeekIndex:', currentWeekIndex);
+    console.log('getCurrentRoutineProgress - currentDayInWeek:', currentDayInWeek);
     
     return {
         week: currentWeekIndex,
