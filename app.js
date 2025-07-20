@@ -15,7 +15,7 @@ if ('serviceWorker' in navigator) {
 // Assume you have some way to define your weekly schedule, e.g.:
 const programStartDate = new Date('2025-07-14'); // Adjust to your actual program start
 const WEEK_LENGTH = 7; // Days in a week
-const PROGRAM_WEEKS = routine.length; // Total weeks in the program
+
 
 // Define a default weekly routine pattern (0=Sun, 1=Mon, ..., 6=Sat)
 // Example: Monday, Wednesday, Friday, Saturday are routine days
@@ -384,6 +384,7 @@ const routine = [
     ]}
     ];
 
+const PROGRAM_WEEKS = routine.length; // Total weeks in the program - needs to come after routine
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 // DOM Elements
