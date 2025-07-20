@@ -718,12 +718,19 @@ function loadWeeklySchedule() {
     for (let i = 0; i < WEEK_LENGTH; i++) {
         const dayCard = document.createElement('div');
         dayCard.classList.add('day-card');
-        dayCard.dataset.dayIndex = i; // Store day index
-        dayCard.dataset.weekIndex = currentDisplayWeek; // Store week index
-
+        
         // Add 'current-day' class if it's today's day of the week AND this is the actual current program week
         if (i === currentDayOfWeek && currentDisplayWeek === Math.floor(getDaysSinceProgramStart() / WEEK_LENGTH)) {
             dayCard.classList.add('current-day');
+        }
+
+        // --- CRITICAL ADJUSTMENT HERE ---
+        // Convert the standard 'i' (0=Sun, 1=Mon) to your routine's day index (0=Mon, 1=Tue)
+        let routineDayIndex;
+        if (i === 0) { // If 'i' is 0 (Sunday)
+            routineDayIndex = 6; // Map to the last day in your routine.days array (where Sunday's data would be, if any)
+        } else { // For Monday (i=1) through Saturday (i=6)
+            routineDayIndex = i - 1; // Shift by one: Mon (1) -> 0, Tue (2) -> 1, etc.
         }
 
         // Determine if it's a routine day based on your 'routine' data structure
