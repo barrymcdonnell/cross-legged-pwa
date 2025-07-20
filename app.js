@@ -37,6 +37,14 @@ const exercises = {
     'Side-Lying Leg Lifts': '10-15 repetitions, 2-3 sets each side. Focus: Hip abductors.'
 };
 
+const backExercises = {
+    'Prone Hip Extension': '2 sets of 10 repetitions. Instructions: Lie on your stomach on the floor and place your hands underneath your forehead. Keeping your knee straight, raise the leg off the floor and hold for the recommended time. Slowly lower and repeat.',
+    'Hip Extension': '2 sets of 10 repetitions. Instructions: Lie face down while bending one knee as much as you can. Tighten your abdominals to keep the spine and pelvis neutral. Contract your buttocks to lift the leg off the ground without moving the pelvis. Hold a few moments and repeat on the other side.',
+    'Contralateral Extension': '2 sets of 10 repetitions. Instructions: Lie on your stomach with your chin tucked in and your arms and legs stretched out making your body as long as possible. Activate your lower abdominals (transversus abdomini) by bringing your belly button inward and by activating your pelvic floor muscles (inner thigh) 20 to 30% of a maximal contraction. Maintain a steady abdominal breathing while you lift one arm and opposite leg up towards the ceiling keeping your chin tucked in. Return and repeat with the other arm and opposite leg.',
+    'Spine Extension': '2 sets of 10 repetitions. Instructions: Lay down on your stomach with your hands together behind your back and your arms straight. Lift your head and trunk as high as possible, while pulling your shoulders back and tucking your chin. Hold for a few seconds. Then exhale while lowering your chest down on the floor. Repeat.',
+    'Glute Bridge With Ball Squeeze': '2 sets of 10 repetitions. Instructions: Lay down on your back with your knees bent and a ball or pillow between them. Squeeze the glutes and contract the abdominals to lift the hips off the ground. As you lift, squeeze the ball between the legs. Hold for a few seconds on top, then release as you lower.',
+ };
+
 // Define the 8-week routine (Days are 0-indexed: Monday=0, Tuesday=1...Sunday=6)
 // A null entry means no specific exercises planned for that day, giving you rest or free practice.
 // Routine is for 3-4 times a week, so some days will be empty.
@@ -330,6 +338,7 @@ const resetWeekButton = document.getElementById('reset-week-button');
 const weekScheduleContent = document.getElementById('week-schedule-content');
 const dailyNotesTextarea = document.getElementById('daily-notes-textarea');
 const saveNotesBtn = document.getElementById('save-notes-btn');
+const backExercisesList = document.getElementById('back-exercises-list'); 
 
 // --- Helper Functions ---
 
@@ -482,6 +491,32 @@ function loadDailyRoutine() {
     if (dailyNotesTextarea) {
         dailyNotesTextarea.value = loadDailyNotes(todayKey);
     }
+}
+
+// Back exercises function
+function loadBackExercises() {
+    if (!backExercisesList) {
+        console.error("Error: 'back-exercises-list' element not found in the DOM.");
+        return;
+    }
+
+    let htmlContent = ''; // This will build the HTML for the list items
+
+    // Loop through the backExercises object
+    for (const exerciseName in backExercises) {
+        // Ensure the property belongs to the object itself, not its prototype chain
+        if (Object.hasOwnProperty.call(backExercises, exerciseName)) {
+            const exerciseDetail = backExercises[exerciseName];
+            htmlContent += `
+                <li>
+                    <strong>${exerciseName}</strong>
+                    <br>
+                    <span class="exercise-detail">${exerciseDetail}</span>
+                </li>
+            `;
+        }
+    }
+    backExercisesList.innerHTML = htmlContent; // Insert the generated HTML into the UL
 }
 
 // --- In updateWeeklyOverview() ---
@@ -904,6 +939,8 @@ function showTab(tabId) {
         loadWeeklySchedule();
     } else if (tabId === 'weekly-summary-section') {
         updateWeeklySummary();
+    } else if (tabId === 'back-exercises-section') { 
+        loadBackExercises();
     }
     // 'full-routine-details' is static, so no function call needed
 
