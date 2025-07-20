@@ -711,11 +711,12 @@ function loadWeeklySchedule() {
     weekScheduleGrid.innerHTML = ''; // Clear previous content
 
     const today = new Date();
-    const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday
+    const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, etc.
 
+    // Update the schedule week display (already correct)
     document.getElementById('schedule-week-display').textContent = `Week ${currentDisplayWeek + 1}`;
 
-    for (let i = 0; i < WEEK_LENGTH; i++) {
+    for (let i = 0; i < WEEK_LENGTH; i++) { // 'i' is the standard JS day index (0=Sun, 1=Mon, etc.)
         const dayCard = document.createElement('div');
         dayCard.classList.add('day-card');
         
@@ -732,31 +733,37 @@ function loadWeeklySchedule() {
         } else { // For Monday (i=1) through Saturday (i=6)
             routineDayIndex = i - 1; // Shift by one: Mon (1) -> 0, Tue (2) -> 1, etc.
         }
+        // --- END CRITICAL ADJUSTMENT ---
 
         // Determine if it's a routine day based on your 'routine' data structure
-        // Assuming 'routine' is an array of weeks, and each week has a 'days' array
         const weekRoutineData = routine[currentDisplayWeek];
-        const dayExercises = weekRoutineData && weekRoutineData.days ? weekRoutineData.days[i] : [];
+        
+        // Access the routine data using the ADJUSTED routineDayIndex
+        // Ensure dayData is either an object or null, not just an empty array for dayExercises
+        const dayData = weekRoutineData && weekRoutineData.days ? weekRoutineData.days[routineDayIndex] : null;
 
-        if (dayExercises && dayExercises.length > 0) {
-            dayCard.classList.add('scheduled');
-            dayCard.innerHTML = `<h3>${dayNames[i]}</h3><p class="status">Routine Day</p>`;
-            // Future: Add logic to display a checkmark if completed
+        // Condition now checks for presence of dayData AND content within it
+        if (dayData && (dayData.warmup?.length > 0 || dayData.exercises?.length > 0)) {
+            dayCard.classList.add('scheduled'); // Add a class for styling workout days
+            dayCard.innerHTML = `<h3>${dayNames[i]}</h3><p class="status summary-workout">Workout Day</p>`;
         } else {
-            dayCard.innerHTML = `<h3>${dayNames[i]}</h3><p class="status">Rest Day</p>`;
+            // Check if dayData exists but is empty (explicit rest day) or completely undefined/null
+            const statusText = dayData ? 'Rest Day' : 'No Routine Set';
+            const statusClass = dayData ? 'summary-rest' : 'summary-unset';
+            dayCard.innerHTML = `<h3>${dayNames[i]}</h3><p class="status ${statusClass}">${statusText}</p>`;
         }
 
         // Add click listener to each day card
         dayCard.addEventListener('click', () => {
             const clickedWeekIndex = parseInt(dayCard.dataset.weekIndex);
-            const clickedDayIndex = parseInt(dayCard.dataset.dayIndex);
-            showExercisesForDay(clickedWeekIndex, clickedDayIndex);
+            // Pass the ADJUSTED routineDayIndex to the function that shows exercises
+            showExercisesForDay(clickedWeekIndex, routineDayIndex); 
         });
 
         weekScheduleGrid.appendChild(dayCard);
     }
 
-    // Add event listeners for week navigation
+    // Add event listeners for week navigation (already correct)
     document.getElementById('prev-week-btn').onclick = showPreviousWeek;
     document.getElementById('next-week-btn').onclick = showNextWeek;
 }
