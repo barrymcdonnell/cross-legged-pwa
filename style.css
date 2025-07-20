@@ -475,11 +475,11 @@ main {
     white-space: nowrap;
 }
 
-.exercise-type-badge.strengthening {
+.exercise-type-badge.strength {
     background-color: #000080; /* Navy */
 }
 
-.exercise-type-badge.stretching {
+.exercise-type-badge.stretch {
     background-color: #4CAF50; /* Green */
 }
 
