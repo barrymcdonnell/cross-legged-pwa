@@ -825,37 +825,17 @@ function showNextWeek() {
 
 // --- New function to display exercises for a specific day ---
 function showExercisesForDay(weekIndex, dayIndex) {
-    isShowingScheduledDay = true; // Set flag when viewing a scheduled day
+    // 1. Set global state for loadDailyRoutine
+    isShowingScheduledDay = true;      // Flag tells loadDailyRoutine to use selected indices
+    selectedScheduleWeekIndex = weekIndex; // Store the clicked week index
+    selectedScheduleDayIndex = dayIndex; // Store the clicked routine-aligned day index
 
-    const dailyRoutineSection = document.getElementById('daily-routine-section');
-    const exerciseList = document.getElementById('exercise-list');
-    const weeklyOverview = document.getElementById('weekly-overview');
-    const dailyProgressContainer = document.getElementById('daily-progress-container');
+    // 2. Call loadDailyRoutine to handle all the display logic
+    loadDailyRoutine();
 
-    weeklyOverview.innerHTML = `Week ${weekIndex + 1} | ${dayNames[dayIndex]}`; // Update header
-    exerciseList.innerHTML = ''; // Clear current exercises
-
-    const weekRoutineData = routine[weekIndex];
-    let exercisesToDisplay = [];
-
-    if (weekRoutineData && weekRoutineData.days && weekRoutineData.days[dayIndex] && weekRoutineData.days[dayIndex].length > 0) {
-        exercisesToDisplay = weekRoutineData.days[dayIndex];
-    }
-
-    if (exercisesToDisplay.length === 0) {
-        exerciseList.innerHTML = '<p>No exercises planned for this day. Enjoy your rest!</p>';
-    } else {
-        const ul = document.createElement('ul');
-        exercisesToDisplay.forEach(exerciseName => {
-            const li = document.createElement('li');
-            li.textContent = exerciseName; // No checkboxes for view-only historical/future days
-            ul.appendChild(li);
-        });
-        exerciseList.appendChild(ul);
-    }
-    dailyProgressContainer.style.display = 'none'; // Always hide progress bar for scheduled day views
-
-    showTab('daily-routine-section'); // Switch to the Today tab
+    // 3. Switch to the 'daily-routine-section' tab
+    // (Ensure your showTab function correctly handles this and resets isShowingScheduledDay = false when on 'daily-routine-section' itself)
+    showTab('daily-routine-section');
 }
 
 // You would call loadWeeklySchedule() when the schedule tab is opened
