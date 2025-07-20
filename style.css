@@ -418,10 +418,53 @@ main {
 }
 
 /* Adding styling for BACK exercises */
+#back-exercises-section ul {
+    list-style-type: none; /* Removes the bullet points */
+    padding: 0;           /* Removes default left padding */
+    margin: 0;            /* Removes default top/bottom margin */
+}
+
+/* Style for individual list items */
+#back-exercises-section ul li {
+    background-color: #f9f9f9; /* Light background for each exercise block */
+    border: 1px solid #ddd;    /* Subtle border around each exercise */
+    border-radius: 8px;        /* Rounded corners for the block */
+    margin-bottom: 15px;       /* Space between exercise blocks */
+    padding: 15px;             /* Internal padding within each block */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Soft shadow for depth */
+}
+
+/* Header for name and badge */
+.exercise-header {
+    display: flex; /* Use flexbox for horizontal alignment */
+    align-items: center; /* Vertically center items */
+    justify-content: space-between; /* Pushes name/badge to ends if needed */
+    margin-bottom: 10px; /* Space below the header */
+}
+
+.exercise-header strong {
+    font-size: 1.1em; /* Make the exercise name slightly larger */
+    color: #333; /* Darker color for prominence */
+}
+
+.exercise-reps,
+.exercise-instructions {
+    margin-bottom: 5px; /* Small space between lines */
+    line-height: 1.4;   /* Ensure readability */
+    color: #555;        /* Slightly lighter text color */
+    font-size: 0.95em;
+}
+
+.exercise-reps strong,
+.exercise-instructions strong {
+    color: #000; /* Make the labels (Reps:, Instructions:) stand out */
+}
+
+/* --- Exercise Type Badges (from previous steps, included for completeness) --- */
 .exercise-type-badge {
     display: inline-block;
     padding: 3px 8px;
-    margin-left: 8px;
+    margin-left: 8px; /* Maintain space if flexbox pushes it */
     border-radius: 4px;
     font-size: 0.75em;
     font-weight: bold;
@@ -429,21 +472,15 @@ main {
     color: white;
     vertical-align: middle;
     line-height: 1;
-    white-space: nowrap; /* Prevents badge text from wrapping */
+    white-space: nowrap;
 }
 
 .exercise-type-badge.strengthening {
-    background-color: #000080; /* Your navy color */
+    background-color: #000080; /* Navy */
 }
 
 .exercise-type-badge.stretching {
-    background-color: #4CAF50; /* A green color */
-}
-
-#back-exercises-section ul li {
-    margin-bottom: 10px; /* Provides space between exercise entries */
-    padding: 8px 0; /* Adds some vertical padding */
-    border-bottom: 1px solid #eee; /* A subtle separator line */
+    background-color: #4CAF50; /* Green */
 }
 
 /* Remove border from the last item for a cleaner look */
