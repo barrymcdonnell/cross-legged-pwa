@@ -535,19 +535,22 @@ function loadBackExercises() {
     let htmlContent = ''; // This will build the HTML for the list items
 
     // Loop through the backExercises object
-    for (const exerciseName in backExercises) {
-        // Ensure the property belongs to the object itself, not its prototype chain
-        if (Object.hasOwnProperty.call(backExercises, exerciseName)) {
-            const exerciseDetail = backExercises[exerciseName];
-            htmlContent += `
-                <li>
-                    <strong>${exerciseName}</strong>
-                    <br>
-                    <span class="exercise-detail">${exerciseDetail}</span>
-                </li>
-            `;
-        }
-    }
+    backExercises.forEach(exercise => {
+        // --- MODIFIED DESTRUCTURING ---
+        // Access 'reps' and 'instructions' directly
+        const { name, reps, instructions, type } = exercise; 
+        // --- END MODIFIED DESTRUCTURING ---
+
+        // Generate a class name for the badge (e.g., "Strengthening" -> "strengthening")
+        const typeClass = type.toLowerCase(); 
+
+        htmlContent += `
+            <li>
+                <strong>${name}</strong>
+                <span class="exercise-type-badge ${typeClass}">${type}</span> <br>
+                <span class="exercise-detail">${reps}. ${instructions}</span> </li>
+        `;
+    });
     backExercisesList.innerHTML = htmlContent; // Insert the generated HTML into the UL
 }
 
