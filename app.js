@@ -37,13 +37,45 @@ const exercises = {
     'Side-Lying Leg Lifts': '10-15 repetitions, 2-3 sets each side. Focus: Hip abductors.'
 };
 
-const backExercises = {
-    'Prone Hip Extension': '2 sets of 10 repetitions. Instructions: Lie on your stomach on the floor and place your hands underneath your forehead. Keeping your knee straight, raise the leg off the floor and hold for the recommended time. Slowly lower and repeat.',
-    'Hip Extension': '2 sets of 10 repetitions. Instructions: Lie face down while bending one knee as much as you can. Tighten your abdominals to keep the spine and pelvis neutral. Contract your buttocks to lift the leg off the ground without moving the pelvis. Hold a few moments and repeat on the other side.',
-    'Contralateral Extension': '2 sets of 10 repetitions. Instructions: Lie on your stomach with your chin tucked in and your arms and legs stretched out making your body as long as possible. Activate your lower abdominals (transversus abdomini) by bringing your belly button inward and by activating your pelvic floor muscles (inner thigh) 20 to 30% of a maximal contraction. Maintain a steady abdominal breathing while you lift one arm and opposite leg up towards the ceiling keeping your chin tucked in. Return and repeat with the other arm and opposite leg.',
-    'Spine Extension': '2 sets of 10 repetitions. Instructions: Lay down on your stomach with your hands together behind your back and your arms straight. Lift your head and trunk as high as possible, while pulling your shoulders back and tucking your chin. Hold for a few seconds. Then exhale while lowering your chest down on the floor. Repeat.',
-    'Glute Bridge With Ball Squeeze': '2 sets of 10 repetitions. Instructions: Lay down on your back with your knees bent and a ball or pillow between them. Squeeze the glutes and contract the abdominals to lift the hips off the ground. As you lift, squeeze the ball between the legs. Hold for a few seconds on top, then release as you lower.',
- };
+const backExercises = [
+    {
+        name: 'Prone Hip Extension',
+        reps: '2 sets of 10 repetitions',
+        instructions: 'Lie on your stomach on the floor and place your hands underneath your forehead. Keeping your knee straight, raise the leg off the floor and hold for the recommended time. Slowly lower and repeat.',
+        type: 'Stretching'
+    },
+    {
+        name: 'Hip Extension',
+        reps: '2 sets of 10 repetitions',
+        instructions: 'Lie face down while bending one knee as much as you can. Tighten your abdominals to keep the spine and pelvis neutral. Contract your buttocks to lift the leg off the ground without moving the pelvis. Hold a few moments and repeat on the other side.',
+        type: 'Stretching'
+    },
+    {
+        name: 'Contralateral Extension',
+        reps: '2 sets of 10 repetitions',
+        instructions: 'Lie on your stomach with your chin tucked in and your arms and legs stretched out making your body as long as possible. Activate your lower abdominals (transversus abdomini) by bringing your belly button inward and by activating your pelvic floor muscles (inner thigh) 20 to 30% of a maximal contraction. Maintain a steady abdominal breathing while you lift one arm and opposite leg up towards the ceiling keeping your chin tucked in. Return and repeat with the other arm and opposite leg.',
+        type: 'Stretching'
+    },
+    {
+        name: 'Spine Extension',
+        reps: '2 sets of 10 repetitions',
+        instructions: 'Lay down on your stomach with your hands together behind your back and your arms straight. Lift your head and trunk as high as possible, while pulling your shoulders back and tucking your chin. Hold for a few seconds. Then exhale while lowering your chest down on the floor. Repeat.',
+        type: 'Stretching'
+    },
+    {
+        name: 'Glute Bridge With Ball Squeeze',
+        reps: '2 sets of 10 repetitions',
+        instructions: 'Lay down on your back with your knees bent and a ball or pillow between them. Squeeze the glutes and contract the abdominals to lift the hips off the ground. As you lift, squeeze the ball between the legs. Hold for a few seconds on top, then release as you lower.',
+        type: 'Stretching'
+    },
+    {
+        name: 'Assisted Trunk Rotation',
+        reps: '2 sets of 10 repetitions',
+        instructions: 'Sit on a chair with your back in neutral position (slightly arched) and your chin tucked in. Turn your upper body to one side moving at the middle back. Increase the stretch by pulling yourself with the back of the chair. Return to the initial position and repeat.',
+        type: 'Strengthening'
+    }    
+];
+ 
 
 // Define the 8-week routine (Days are 0-indexed: Monday=0, Tuesday=1...Sunday=6)
 // A null entry means no specific exercises planned for that day, giving you rest or free practice.
