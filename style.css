@@ -417,6 +417,18 @@ main {
     margin-top: 2px; /* Small gap between name and detail */
 }
 
+/* Adding styling for back exercises */
+#back-exercises-section ul li {
+    margin-bottom: 10px; /* Provides space between exercise entries */
+    padding: 8px 0; /* Adds some vertical padding */
+    border-bottom: 1px solid #eee; /* A subtle separator line */
+}
+
+/* Remove border from the last item for a cleaner look */
+#back-exercises-section ul li:last-child {
+    border-bottom: none;
+}
+
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
     .navbar {
