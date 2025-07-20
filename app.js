@@ -1,4 +1,4 @@
-// PWA Service Worker Registration (keep this from previous instructions)
+// PWA Service Worker Registration
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/cross-legged-pwa/service-worker.js', { scope: '/cross-legged-pwa/' }) // ADJUST SCOPE HERE!
@@ -11,26 +11,24 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// Setting the start date
-// Assume you have some way to define your weekly schedule, e.g.:
-const programStartDate = new Date('2025-07-14'); // Adjust to your actual program start
+// ************************
+// --- GLOBAL CONSTANTS ---
+// ************************
+
+// Ensure PROGRAM_START_DATE is defined before any function that uses it
+const PROGRAM_START_DATE = new Date('2025-07-14T00:00:00Z'); // Adjust to your actual program start, ensure ISO format for consistency
 const WEEK_LENGTH = 7; // Days in a week
 
-
-// Define a default weekly routine pattern (0=Sun, 1=Mon, ..., 6=Sat)
-// Example: Monday, Wednesday, Friday, Saturday are routine days
+// Define a default weekly routine pattern (0=Sun, 1=Mon, ..., 6=Sat) - currently unused but kept for context
 const DEFAULT_WEEKLY_ROUTINE_PATTERN = [1, 3, 5];
-
-// A flag to indicate if daily-routine-section is currently showing a specific schedule day
-let isShowingScheduledDay = false;
-let selectedScheduleWeekIndex = 0; // Stores the week index of the clicked schedule day
-let selectedScheduleDayIndex = 0; // Stores the day index of the clicked schedule day
 
 let currentDisplayWeek = 0; // 0-indexed for program weeks
 
-// --- CORE APPLICATION LOGIC ---
+// **********************
+// --- EXERCISE DATA ---
+// **********************
 
-// Exercise Data - Define all exercises with their details
+// Exercise Data
 const exercises = {
     'Butterfly Stretch': 'Hold for 30-60 seconds, 2-3 repetitions. Focus: Inner thighs, hip external rotation.',
     'Figure Four Stretch': 'Hold for 30-60 seconds, 2-3 repetitions each side. Focus: Hip external rotation (glutes, piriformis).',
@@ -42,6 +40,7 @@ const exercises = {
     'Side-Lying Leg Lifts': '10-15 repetitions, 2-3 sets each side. Focus: Hip abductors.'
 };
 
+// Back Exercise Data
 const backExercises = [
      {
         name: 'Assisted Trunk Rotation',
@@ -387,24 +386,36 @@ const routine = [
 const PROGRAM_WEEKS = routine.length; // Total weeks in the program - needs to come after routine
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+
+// --- Global State Variables ---
+let isShowingScheduledDay = false; // Flag to tell loadDailyRoutine what to display
+let selectedScheduleWeekIndex = 0; // Stores the week index of the clicked schedule day
+let selectedScheduleDayIndex = 0; // Stores the day index (routine-aligned) of the clicked schedule day
+let currentDisplayWeek = 0; // 0-indexed for schedule week navigation
+
+
 // DOM Elements
-const dateDisplay = document.getElementById('date-display');
-const currentWeekDisplay = document.getElementById('current-week-display');
-const currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display');
-const exerciseList = document.getElementById('exercise-list');
-const dailyProgressBarContainer = document.getElementById('daily-progress-container'); // NEW
-const dailyProgressBar = document.getElementById('daily-progress-bar');
-const dailyProgressText = document.getElementById('daily-progress-text');
-const summaryContent = document.getElementById('summary-content');
-const resetWeekButton = document.getElementById('reset-week-button');
-const weekScheduleContent = document.getElementById('week-schedule-content');
-const dailyNotesTextarea = document.getElementById('daily-notes-textarea');
-const saveNotesBtn = document.getElementById('save-notes-btn');
-const backExercisesList = document.getElementById('back-exercises-list'); 
+// --- DOM Elements (Declared globally, assigned in DOMContentLoaded) ---
+let dateDisplay;
+let currentWeekDisplay;
+let currentDayOfWeekDisplay;
+let exerciseList;
+let dailyProgressBarContainer;
+let dailyProgressBar;
+let dailyProgressText;
+let summaryContent;
+let resetWeekButton;
+let weekScheduleContent; // Assuming you have this for the schedule section
+let dailyNotesTextarea;
+let saveNotesBtn;
+let backExercisesList; // For back exercises list container
+let dailyNotesSection;
 
+// *************************
 // --- Helper Functions ---
+// *************************
 
-// Get the date for thet header
+// Get the date for the header
 function displayCurrentDate() {
     // Current date and day of the week
     const today = new Date();
@@ -455,189 +466,6 @@ function getCurrentRoutineProgress() {
     };
 }
 
-/** LOGIC START
- * Loads exercises for the current day based on the routine.
- */
-function loadDailyRoutine() {
-    const exerciseList = document.getElementById('exercise-list');
-    const dailyProgressContainer = document.getElementById('daily-progress-container');
-    const dailyNotesSection = document.getElementById('daily-notes-section'); // <--- Make sure you have an ID for your notes container
-    const currentWeekDisplay = document.getElementById('current-week-display'); // For "Week X"
-    const currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display'); // For "Day Y"
-    const dailyNotesTextarea = document.getElementById('daily-notes-textarea'); 
-
-    let weekIndexToLoad;
-    let routineDayIndexToLoad; // This will hold the 0-indexed Monday day for routine lookup
-    let displayDayName;       // This will hold the actual day name for the header (e.g., "Monday", "Sunday")
-    let displayWeekNumber;    // For "Week X" in the header
-
-    if (isShowingScheduledDay) {
-        // If coming from schedule click, use the stored indices
-        weekIndexToLoad = selectedScheduleWeekIndex;
-        routineDayIndexToLoad = selectedScheduleDayIndex; // This is already routine-aligned (Mon=0)
-        displayWeekNumber = weekIndexToLoad + 1;
-
-        // Convert the routine-aligned day index back to the standard dayNames index for display
-        // Example: routineDayIndex 0 (Monday) -> dayNames[1] (Monday)
-        // Example: routineDayIndex 6 (Sunday) -> dayNames[0] (Sunday)
-        displayDayName = dayNames[routineDayIndexToLoad === 6 ? 0 : routineDayIndexToLoad + 1];
-
-    } else {
-        // If loading for "Today" tab directly, get current progress
-        const { week, day } = getCurrentRoutineProgress(); // 'day' here is already routine-aligned (Mon=0)
-        weekIndexToLoad = week;
-        routineDayIndexToLoad = day;
-        displayWeekNumber = weekIndexToLoad + 1;
-        // Convert routine-aligned day index to standard dayNames index for display
-        displayDayName = dayNames[routineDayIndexToLoad === 6 ? 0 : routineDayIndexToLoad + 1];
-    }
-    
-    const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex } = getCurrentRoutineProgress();
-    const todayKey = new Date().toISOString().split('T')[0];
-
-        // Always display the calculated week and day numbers/names
-    if (currentWeekDisplay) {
-        currentWeekDisplay.textContent = `Week ${displayWeekNumber}`; 
-    }
-    if (currentDayOfWeekDisplay) {
-        currentDayOfWeekDisplay.textContent = displayDayName; 
-    }
-
-    const currentDayData = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex];
-    const todayKey = new Date().toISOString().split('T')[0]; 
-    
-    const dailyWarmup = currentDayData.warmup || []; // Get warm-up exercises
-    const dailyExercises = currentDayData.exercises || []; // Get main exercises
-
-    let htmlContent = '';
-
-    // Display Warm-up Exercises
-    if (currentDayData.warmup && currentDayData.warmup.length > 0) {
-        htmlContent += '<div class="warmup-section">'; // Added a div for styling the whole section
-        htmlContent += '<h3>Warmup</h3>';
-        htmlContent += '<ul>';
-        currentDayData.warmup.forEach(warmupExercise => {
-            htmlContent += `<li>${warmupExercise}</li>`;
-        });
-        htmlContent += '</ul>';
-        htmlContent += '</div>'; // Close the warmup section div
-    }
-
-    // Display Main Exercises
-    if (currentDayData.exercises && currentDayData.exercises.length > 0) {
-        htmlContent += '<div class="main-routine-section">'; // Added a div for styling the whole section
-        htmlContent += '<h3>Main Routine</h3>'; // Changed heading
-        htmlContent += '<ul class="exercise-checklist">'; // Keep the class for checklist specific styling
-        const completedExercises = getDailyProgress(todayKey);
-
-        currentDayData.exercises.forEach((exercise, index) => {
-            const isCompleted = completedExercises.includes(exercise);
-            const checkedAttribute = isCompleted ? 'checked' : '';
-
-            const exerciseDetail = exercises[exercise] || 'No details available.'; 
-            
-            htmlContent += `
-                <li>
-                    <input type="checkbox" id="exercise-${index}" value="${exercise}" ${checkedAttribute} data-exercise="${exercise}">
-                    <label for="exercise-${index}">${exercise}
-                    <br>
-                        <span class="exercise-detail">${exerciseDetail}</span></label>
-                </li>
-            `;
-        });
-        htmlContent += '</ul>';
-        htmlContent += '</div>'; // Close the main routine section div
-    } else {
-        // This 'else' block ensures a message is displayed if there are no main exercises.
-        // It might be redundant if the !currentDayData check handles "no workout day".
-        // Consider if you want this message only if main exercises are missing but warmups exist.
-        if ((!currentDayData.warmup || currentDayData.warmup.length === 0) && (!currentDayData.exercises || currentDayData.exercises.length === 0)) {
-            htmlContent = '<p>No exercises planned for today.</p>';
-        } else if (currentDayData.warmup && currentDayData.warmup.length > 0) {
-            // If only warmups are present, and no main exercises, you might want a different message.
-            // Or this could be implicitly handled by the sections above.
-        }
-    }
-
-    exerciseList.innerHTML = htmlContent; // Update the display
-
-    // Attach event listeners for checkboxes after rendering HTML
-    document.querySelectorAll('#exercise-list input[type="checkbox"]').forEach(checkbox => {
-        checkbox.addEventListener('change', (event) => {
-            const exerciseName = event.target.dataset.exercise;
-            const isChecked = event.target.checked;
-            toggleExerciseComplete(todayKey, exerciseName, isChecked); // Correct arguments
-            updateDailyProgressBar(); // Update progress bar when an exercise is ticked
-            
-            // Update the list item class immediately for visual feedback
-            const listItem = event.target.closest('li');
-            if (listItem) {
-                listItem.classList.toggle('completed', isChecked);
-            }
-        });
-    });
-    
-    // Only show progress bar if there are main exercises
-    if (dailyExercises.length > 0) {
-        dailyProgressContainer.style.display = 'block';
-    } else {
-        dailyProgressContainer.style.display = 'none';
-    }
-
-    updateDailyProgressBar();
-    updateWeeklyOverview();
-    if (dailyNotesTextarea) {
-        dailyNotesTextarea.value = loadDailyNotes(todayKey);
-    }
-}
-
-// Back exercises function
-function loadBackExercises() {
-    if (!backExercisesList) {
-        console.error("Error: 'back-exercises-list' element not found in the DOM.");
-        return;
-    }
-
-    let htmlContent = ''; // This will build the HTML for the list items
-
-    // Loop through the backExercises object
-    backExercises.forEach(exercise => {
-        // --- MODIFIED DESTRUCTURING ---
-        // Access 'reps' and 'instructions' directly
-        const { name, reps, instructions, type } = exercise; 
-        // --- END MODIFIED DESTRUCTURING ---
-
-        // Generate a class name for the badge (e.g., "Strengthening" -> "strengthening")
-        const typeClass = type.toLowerCase(); 
-
-        htmlContent += `
-            <li>
-                <div class="exercise-header">
-                    <strong>${name}</strong>
-                    <span class="exercise-type-badge ${typeClass}">${type}</span>
-                </div>
-                <p class="exercise-reps"><strong>Reps:</strong> ${reps}</p>
-                <p class="exercise-instructions"><strong>Instructions:</strong> ${instructions}</p>
-            </li>
-        `;
-    });
-    backExercisesList.innerHTML = htmlContent; // Insert the generated HTML into the UL
-}
-
-// --- In updateWeeklyOverview() ---
-function updateWeeklyOverview() {
-    const currentWeekDisplay = document.getElementById('current-week-display');
-    const currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display');
-
-    const { week, day } = getCurrentRoutineProgress(); // Gets current week and day indices
-
-    console.log('updateWeeklyOverview - Displaying week:', week, 'day:', day); // ADD THIS
-
-    // Update the display elements
-    currentWeekDisplay.textContent = `Week ${week + 1}`; // Display as 1-indexed week
-    currentDayOfWeekDisplay.textContent = day + 1; // Display as 1-indexed day
-}
-
 /**
  * Gets saved progress for a specific day from localStorage.
  * @param {string} dateKey - YYYY-MM-DD string.
@@ -645,9 +473,6 @@ function updateWeeklyOverview() {
  */
 function getDailyProgress(dateKey) {
     const progress = JSON.parse(localStorage.getItem('dailyProgress')) || {};
-    console.log('getDailyProgress - dateKey:', dateKey); // ADD THIS
-    console.log('getDailyProgress - progress:', progress); // ADD THIS
-    console.log('getDailyProgress - returning:', progress[dateKey] || []); // ADD THIS
     return progress[dateKey] || [];
 }
 
@@ -669,65 +494,8 @@ function toggleExerciseComplete(dateKey, exerciseName, isCompleted) {
 
     progress[dateKey] = dailyCompleted;
     localStorage.setItem('dailyProgress', JSON.stringify(progress));
-
-    loadDailyRoutine();
 }
 
-/**
- * Updates the daily progress bar and text.
- */
-function updateDailyProgressBar() {
-    const dailyProgressBar = document.getElementById('daily-progress-bar');
-    const dailyProgressText = document.getElementById('daily-progress-text');
-    const dailyProgressContainer = document.getElementById('daily-progress-container'); // Get this element too for hiding/showing
-
-    const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex } = getCurrentRoutineProgress();
-    const todayKey = new Date().toISOString().split('T')[0];
-
-    // Get the specific day's data from the routine
-    const currentDayData = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex];
-
-    // Handle cases where there's no routine data for the day (e.g., rest day)
-    if (!currentDayData) {
-        dailyProgressBarContainer.style.display = 'none'; // Hide the progress bar
-        exerciseList.innerHTML = '<p>No specific routine defined for today. Enjoy your day!</p>';
-        if (dailyNotesTextarea) {
-             dailyNotesTextarea.value = loadDailyNotes(todayKey); // Still load notes if available
-        }
-        return; // Exit the function as there's no workout
-    }
-
-    // Safely get lengths of warmup and exercises arrays, defaulting to 0 if they don't exist
-    const warmupCount = currentDayData.warmup ? currentDayData.warmup.length : 0;
-    const exerciseCount = currentDayData.exercises ? currentDayData.exercises.length : 0;
-
-    const totalExercises = currentDayData.exercises ? currentDayData.exercises.length : 0;
-    const completedExercises = getDailyProgress(todayKey); // This should return an array of completed exercises
-    const completedCount = completedExercises.length;
-
-    // Show the progress bar container if there's a routine
-    dailyProgressContainer.style.display = 'block';
-
-    // NEW: Load and display notes
-    if (dailyNotesTextarea) { // Ensure the element exists before trying to access it
-        dailyNotesTextarea.value = loadDailyNotes(todayKey);
-    }
-
-    // Update the <progress> element's value and max attributes
-    dailyProgressBar.value = completedCount;
-    
-    // Crucial check to prevent non-finite 'max' values
-    if (totalExercises > 0) {
-        dailyProgressBar.max = totalExercises;
-        let percentage = (completedCount / totalExercises) * 100;
-        dailyProgressText.textContent = `${completedCount}/${totalExercises} exercises complete (${percentage.toFixed(0)}%)`;
-    } else {
-        // If totalExercises is 0 (e.g., empty arrays, though your routine data has items)
-        dailyProgressBar.max = 1; // Set a default max to avoid errors, effectively making it 0%
-        dailyProgressBar.value = 0;
-        dailyProgressText.textContent = `No exercises planned for today.`;
-    }
-}
 /**
  * Loads notes for the current day from localStorage.
  * @param {string} dateKey - The date key (e.g., 'YYYY-MM-DD').
@@ -747,69 +515,219 @@ function saveDailyNotes(dateKey, notes) {
 }
 
 
-// --- Weekly Schedule Logic (NEW) ---
-function loadWeeklySchedule() {
-    const weekScheduleGrid = document.getElementById('week-schedule-grid');
-    weekScheduleGrid.innerHTML = ''; // Clear previous content
+// *******************************
+// ---- CORE LOGIC FUNCTIONS ----
+// *******************************
 
-    const today = new Date();
-    const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, etc.
+// Load Daily Routine
+// This loads the Today tab
 
-    // Update the schedule week display (already correct)
-    document.getElementById('schedule-week-display').textContent = `Week ${currentDisplayWeek + 1}`;
-
-    for (let i = 0; i < WEEK_LENGTH; i++) { // 'i' is the standard JS day index (0=Sun, 1=Mon, etc.)
-        const dayCard = document.createElement('div');
-        dayCard.classList.add('day-card');
-        
-        // Add 'current-day' class if it's today's day of the week AND this is the actual current program week
-        if (i === currentDayOfWeek && currentDisplayWeek === Math.floor(getDaysSinceProgramStart() / WEEK_LENGTH)) {
-            dayCard.classList.add('current-day');
-        }
-
-        // --- CRITICAL ADJUSTMENT HERE ---
-        // Convert the standard 'i' (0=Sun, 1=Mon) to your routine's day index (0=Mon, 1=Tue)
-        let routineDayIndex;
-        if (i === 0) { // If 'i' is 0 (Sunday)
-            routineDayIndex = 6; // Map to the last day in your routine.days array (where Sunday's data would be, if any)
-        } else { // For Monday (i=1) through Saturday (i=6)
-            routineDayIndex = i - 1; // Shift by one: Mon (1) -> 0, Tue (2) -> 1, etc.
-        }
-        // --- END CRITICAL ADJUSTMENT ---
-
-        // Determine if it's a routine day based on your 'routine' data structure
-        const weekRoutineData = routine[currentDisplayWeek];
-        
-        // Access the routine data using the ADJUSTED routineDayIndex
-        // Ensure dayData is either an object or null, not just an empty array for dayExercises
-        const dayData = weekRoutineData && weekRoutineData.days ? weekRoutineData.days[routineDayIndex] : null;
-
-        // Condition now checks for presence of dayData AND content within it
-        if (dayData && (dayData.warmup?.length > 0 || dayData.exercises?.length > 0)) {
-            dayCard.classList.add('scheduled'); // Add a class for styling workout days
-            dayCard.innerHTML = `<h3>${dayNames[i]}</h3><p class="status summary-workout">Workout Day</p>`;
-        } else {
-            // Check if dayData exists but is empty (explicit rest day) or completely undefined/null
-            const statusText = dayData ? 'Rest Day' : 'No Routine Set';
-            const statusClass = dayData ? 'summary-rest' : 'summary-unset';
-            dayCard.innerHTML = `<h3>${dayNames[i]}</h3><p class="status ${statusClass}">${statusText}</p>`;
-        }
-
-        // Add click listener to each day card
-        dayCard.addEventListener('click', () => {
-            const clickedWeekIndex = parseInt(dayCard.dataset.weekIndex);
-            // Pass the ADJUSTED routineDayIndex to the function that shows exercises
-            showExercisesForDay(clickedWeekIndex, routineDayIndex); 
-        });
-
-        weekScheduleGrid.appendChild(dayCard);
+function loadDailyRoutine() {
+    // Ensure DOM elements are defined before accessing them
+    if (!exerciseList || !currentWeekDisplay || !currentDayOfWeekDisplay || !dailyProgressBarContainer || !dailyNotesSection) {
+        console.error("DOM elements not fully initialized for loadDailyRoutine.");
+        return; // Exit if elements are missing
     }
 
-    // Add event listeners for week navigation (already correct)
-    document.getElementById('prev-week-btn').onclick = showPreviousWeek;
-    document.getElementById('next-week-btn').onclick = showNextWeek;
+    let weekIndexToLoad;
+    let routineDayIndexToLoad; // This will hold the 0-indexed Monday day for routine lookup
+    let displayDayName;       // This will hold the actual day name for the header (e.g., "Monday", "Sunday")
+    let displayWeekNumber;    // For "Week X" in the header
+
+    // Determine which day's routine to load: today's or a scheduled day's
+    if (isShowingScheduledDay) {
+        // If coming from schedule click, use the stored global indices
+        weekIndexToLoad = selectedScheduleWeekIndex;
+        routineDayIndexToLoad = selectedScheduleDayIndex; // This is already routine-aligned (Mon=0)
+    } else {
+        // If loading for "Today" tab directly or returning to it, get current progress
+        const { week, day } = getCurrentRoutineProgress(); // 'day' here is already routine-aligned (Mon=0)
+        weekIndexToLoad = week;
+        routineDayIndexToLoad = day;
+    }
+    
+    // Calculate display values based on the *determined* indices
+    displayWeekNumber = weekIndexToLoad + 1;
+    // Convert routine-aligned day index back to the standard dayNames index (0=Sun, 1=Mon...) for display
+    displayDayName = dayNames[routineDayIndexToLoad === 6 ? 0 : routineDayIndexToLoad + 1];
+
+    // Update the display elements based on what is being LOADED/DISPLAYED
+    currentWeekDisplay.textContent = `Week ${displayWeekNumber}`;
+    currentDayOfWeekDisplay.textContent = displayDayName;
+
+    // Fetch the routine data using the CORRECTLY DETERMINED routine-aligned indices
+    const currentDayData = routine[weekIndexToLoad]?.days?.[routineDayIndexToLoad];
+    
+    // The key for saving progress/notes is always based on *actual today's date*,
+    // because you only complete exercises *today*, regardless of what day you're viewing.
+    const todayKey = new Date().toISOString().split('T')[0];
+
+    // HTML rendering
+    let htmlContent = '';
+
+    // Check if there's any valid routine data for this day to display
+    if (!currentDayData || (currentDayData.warmup?.length === 0 && currentDayData.exercises?.length === 0)) {
+        exerciseList.innerHTML = '<p>No specific routine defined for this day. Enjoy your day!</p>';
+        dailyProgressContainer.style.display = 'none'; // Hide progress bar
+        dailyNotesSection.style.display = 'block'; // Keep notes section visible even if no workout
+        if (dailyNotesTextarea) {
+             dailyNotesTextarea.value = loadDailyNotes(todayKey); // Load notes
+        }
+        return; // Exit function if no routine
+    }
+
+    // If there's a routine, ensure containers are visible
+    dailyProgressContainer.style.display = 'block';
+    dailyNotesSection.style.display = 'block';
+    
+    // Display Warm-up Exercises
+    if (currentDayData.warmup && currentDayData.warmup.length > 0) {
+        htmlContent += '<div class="warmup-section">';
+        htmlContent += '<h3>Warmup</h3><ul>';
+        currentDayData.warmup.forEach(warmupExercise => {
+            htmlContent += `<li>${warmupExercise}</li>`;
+        });
+        htmlContent += '</ul></div>';
+    }
+
+    // Display Main Exercises
+    if (currentDayData.exercises && currentDayData.exercises.length > 0) {
+        htmlContent += '<div class="main-routine-section">';
+        htmlContent += '<h3>Main Routine</h3>';
+        htmlContent += '<ul class="exercise-checklist">';
+        
+        // Load completed exercises for TODAY's date for checkboxes
+        const completedExercises = getDailyProgress(todayKey); 
+
+        currentDayData.exercises.forEach((exercise, index) => {
+            const isCompleted = completedExercises.includes(exercise);
+            const checkedAttribute = isCompleted ? 'checked' : '';
+            const exerciseDetail = exercises[exercise] || 'No details available.'; 
+
+            htmlContent += `
+                <li class="${isCompleted ? 'completed' : ''}">
+                    <input type="checkbox" id="exercise-${index}" value="${exercise}" ${checkedAttribute} data-exercise="${exercise}">
+                    <label for="exercise-${index}">
+                        <strong>${exercise}</strong>
+                        <br>
+                        <span class="exercise-detail">${exerciseDetail}</span>
+                    </label>
+                </li>
+            `;
+        });
+        htmlContent += '</ul></div>';
+    }
+    
+    exerciseList.innerHTML = htmlContent; // Update the display
+
+    // Attach event listeners for checkboxes after rendering HTML
+    document.querySelectorAll('#exercise-list input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', (event) => {
+            const exerciseName = event.target.dataset.exercise;
+            const isChecked = event.target.checked;
+            toggleExerciseComplete(todayKey, exerciseName, isChecked); // Correct arguments
+            updateDailyProgressBar(); // Update progress bar when an exercise is ticked
+            
+            // Update the list item class immediately for visual feedback
+            const listItem = event.target.closest('li');
+            if (listItem) {
+                listItem.classList.toggle('completed', isChecked);
+            }
+        });
+    });
+    
+    // Load notes for TODAY's date
+    if (dailyNotesTextarea) {
+        dailyNotesTextarea.value = loadDailyNotes(todayKey); 
+        // Save notes on input change as well, not just on button click
+        dailyNotesTextarea.removeEventListener('input', dailyNotesInputHandler); // Prevent duplicate listeners
+        dailyNotesTextarea.addEventListener('input', dailyNotesInputHandler);
+    }
+    
+    updateDailyProgressBar(); // Always update progress bar
 }
 
+// Handler for daily notes textarea input
+function dailyNotesInputHandler() {
+    const todayKey = new Date().toISOString().split('T')[0];
+    saveDailyNotes(todayKey, dailyNotesTextarea.value);
+}
+
+/**
+ * Updates the daily progress bar and text.
+ */
+function updateDailyProgressBar() {
+    if (!dailyProgressBar || !dailyProgressText || !dailyProgressContainer) {
+        console.error("Progress bar DOM elements not initialized.");
+        return;
+    }
+
+    const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex } = getCurrentRoutineProgress();
+    const todayKey = new Date().toISOString().split('T')[0];
+
+    // Get the specific day's data from the routine
+    const currentDayData = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex];
+
+    // Handle cases where there's no routine data for the day (e.g., rest day or null entry)
+    if (!currentDayData || !currentDayData.exercises || currentDayData.exercises.length === 0) {
+        dailyProgressContainer.style.display = 'none'; // Hide the progress bar
+        return; // Exit the function as there's no workout to track progress for
+    }
+
+    const totalExercises = currentDayData.exercises.length;
+    const completedExercises = getDailyProgress(todayKey); // This should return an array of completed exercises
+    const completedCount = completedExercises.length;
+
+    // Show the progress bar container if there's a routine
+    dailyProgressContainer.style.display = 'block';
+
+    // Update the <progress> element's value and max attributes
+    dailyProgressBar.value = completedCount;
+    
+    // Crucial check to prevent non-finite 'max' values
+    if (totalExercises > 0) {
+        dailyProgressBar.max = totalExercises;
+        let percentage = (completedCount / totalExercises) * 100;
+        dailyProgressText.textContent = `${completedCount}/${totalExercises} exercises complete (${percentage.toFixed(0)}%)`;
+    } else {
+        dailyProgressBar.max = 1; // Set a default max to avoid errors
+        dailyProgressBar.value = 0;
+        dailyProgressText.textContent = `No exercises planned for today.`;
+    }
+}
+
+/**
+ * Loads and displays the list of back exercises.
+ */
+function loadBackExercises() {
+    if (!backExercisesList) {
+        console.error("Error: 'back-exercises-list' element not found in the DOM.");
+        return;
+    }
+
+    let htmlContent = '';
+
+    backExercises.forEach(exercise => {
+        const { name, reps, instructions, type } = exercise;
+        const typeClass = type.toLowerCase().replace(/\s/g, '-'); // e.g., "Strength" -> "strength"
+
+        htmlContent += `
+            <li>
+                <div class="exercise-header">
+                    <strong>${name}</strong>
+                    <span class="exercise-type-badge ${typeClass}">${type}</span>
+                </div>
+                <p class="exercise-reps"><strong>Reps:</strong> ${reps}</p>
+                <p class="exercise-instructions"><strong>Instructions:</strong> ${instructions}</p>
+            </li>
+        `;
+    });
+    backExercisesList.innerHTML = htmlContent;
+}
+
+
+// Weekly Schedule Logic
+// PREV and NEXT Buttons
 function showPreviousWeek() {
     if (currentDisplayWeek > 0) {
         currentDisplayWeek--;
@@ -824,25 +742,92 @@ function showNextWeek() {
     }
 }
 
-// --- New function to display exercises for a specific day ---
-function showExercisesForDay(weekIndex, dayIndex) {
-    // 1. Set global state for loadDailyRoutine
-    isShowingScheduledDay = true;      // Flag tells loadDailyRoutine to use selected indices
-    selectedScheduleWeekIndex = weekIndex; // Store the clicked week index
-    selectedScheduleDayIndex = dayIndex; // Store the clicked routine-aligned day index
+// --- Weekly Schedule Logic (NEW) ---
+function loadWeeklySchedule() {
+    const weekScheduleGrid = document.getElementById('week-schedule-grid');
+    if (!weekScheduleGrid) {
+        console.error("Error: 'week-schedule-grid' element not found in the DOM.");
+        return;
+    }
+    weekScheduleGrid.innerHTML = ''; // Clear previous content
 
-    // 2. Call loadDailyRoutine to handle all the display logic
-    loadDailyRoutine();
+    const today = new Date();
+    const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, etc.
 
-    // 3. Switch to the 'daily-routine-section' tab
-    // (Ensure your showTab function correctly handles this and resets isShowingScheduledDay = false when on 'daily-routine-section' itself)
-    showTab('daily-routine-section');
+    const scheduleWeekDisplay = document.getElementById('schedule-week-display');
+    if (scheduleWeekDisplay) {
+        scheduleWeekDisplay.textContent = `Week ${currentDisplayWeek + 1}`;
+    }
+
+    for (let i = 0; i < WEEK_LENGTH; i++) { // 'i' is the standard JS day index (0=Sun, 1=Mon, etc.)
+        const dayCard = document.createElement('div');
+        dayCard.classList.add('day-card');
+        dayCard.dataset.dayIndex = i; // Store original JS day index for potential use, though routineDayIndex is used for logic
+        dayCard.dataset.weekIndex = currentDisplayWeek;
+
+        // Add 'current-day' class if it's today's day of the week AND this is the actual current program week
+        if (i === currentDayOfWeek && currentDisplayWeek === Math.floor(getDaysSinceProgramStart() / WEEK_LENGTH)) {
+            dayCard.classList.add('current-day');
+        }
+
+        // Convert the standard 'i' (0=Sun, 1=Mon) to your routine's day index (0=Mon, 1=Tue)
+        let routineDayIndex;
+        if (i === 0) { // If 'i' is 0 (Sunday)
+            routineDayIndex = 6; // Map to the last day in your routine.days array
+        } else { // For Monday (i=1) through Saturday (i=6)
+            routineDayIndex = i - 1; // Shift by one: Mon (1) -> 0, Tue (2) -> 1, etc.
+        }
+
+        const weekRoutineData = routine[currentDisplayWeek];
+        const dayData = weekRoutineData && weekRoutineData.days ? weekRoutineData.days[routineDayIndex] : null;
+
+        let statusText;
+        let statusClass;
+
+        if (dayData && (dayData.warmup?.length > 0 || dayData.exercises?.length > 0)) {
+            dayCard.classList.add('scheduled'); // Add a class for styling workout days
+            statusText = 'Workout Day';
+            statusClass = 'summary-workout';
+        } else {
+            statusText = dayData ? 'Rest Day' : 'No Routine Set';
+            statusClass = dayData ? 'summary-rest' : 'summary-unset';
+        }
+        
+        dayCard.innerHTML = `<h3>${dayNames[i]}</h3><p class="status ${statusClass}">${statusText}</p>`;
+
+        // Add click listener to each day card
+        dayCard.addEventListener('click', () => {
+            const clickedWeekIndex = parseInt(dayCard.dataset.weekIndex);
+            showExercisesForDay(clickedWeekIndex, routineDayIndex); 
+        });
+
+        weekScheduleGrid.appendChild(dayCard);
+    }
+    
+    // Ensure event listeners are correctly assigned to buttons
+    const prevWeekBtn = document.getElementById('prev-week-btn');
+    const nextWeekBtn = document.getElementById('next-week-btn');
+    if (prevWeekBtn) prevWeekBtn.onclick = showPreviousWeek;
+    if (nextWeekBtn) nextWeekBtn.onclick = showNextWeek;
 }
 
-// You would call loadWeeklySchedule() when the schedule tab is opened
-// (This is already handled by the showTab() function)
+/**
+ * Sets global state and switches to the daily routine tab to display exercises for a specific day.
+ * @param {number} weekIndex - The 0-indexed week of the routine.
+ * @param {number} dayIndex - The 0-indexed day of the week (Monday=0, Sunday=6).
+ */
+function showExercisesForDay(weekIndex, dayIndex) {
+    isShowingScheduledDay = true;
+    selectedScheduleWeekIndex = weekIndex;
+    selectedScheduleDayIndex = dayIndex;
 
-// --- Weekly Summary Logic ---
+    showTab('daily-routine-section'); // This will call loadDailyRoutine with the new state
+}
+
+
+// *******************************
+// ---- Weekly Summary Logic ----
+// *******************************
 
 /**
  * Initializes the weekly progress tracking in localStorage.
@@ -854,15 +839,25 @@ function initializeWeeklyProgress() {
         weekData: {}
     };
     localStorage.setItem('weeklySummary', JSON.stringify(weeklySummary));
+    // Also, ensure routineStartDate is set if not already
+    if (!localStorage.getItem('routineStartDate')) {
+        localStorage.setItem('routineStartDate', PROGRAM_START_DATE.toISOString().split('T')[0]);
+    }
 }
 
+// --- In updateWeeklyOverview() ---
 /**
  * Updates and displays the weekly summary.
  * Clears old daily progress data when a new week starts.
  */
 function updateWeeklySummary() {
+    if (!summaryContent || !resetWeekButton) {
+        console.error("Summary DOM elements not initialized.");
+        return;
+    }
+
     const today = new Date();
-    const { week: currentRoutineWeekIndex, dayOfWeek } = getCurrentRoutineProgress();
+    const { week: currentRoutineWeekIndex } = getCurrentRoutineProgress();
     let weeklySummary = JSON.parse(localStorage.getItem('weeklySummary')) || { lastCalculatedWeek: -1, weekData: {} };
     let dailyProgress = JSON.parse(localStorage.getItem('dailyProgress')) || {};
 
@@ -870,30 +865,36 @@ function updateWeeklySummary() {
 
     // Check if a new week has started and summary needs to be generated for the previous one
     // This logic ensures summary is generated for the week that *just ended*
-    if (currentRoutineWeekIndex > lastCalculatedWeek && lastCalculatedWeek >= 0) {
-        const previousWeekData = calculateSummaryForWeek(lastCalculatedWeek, dailyProgress);
-        weeklySummary.weekData[lastCalculatedWeek] = previousWeekData;
-        console.log(`Summary calculated for Week ${lastCalculatedWeek + 1}`);
-
-        // After calculating summary for the previous week, update lastCalculatedWeek
-        weeklySummary.lastCalculatedWeek = currentRoutineWeekIndex;
+    // And also handles initial run if lastCalculatedWeek is -1 (start of week 0)
+    if (currentRoutineWeekIndex > lastCalculatedWeek) {
+        // If it's the very first time, lastCalculatedWeek will be -1, don't summarize "previous" week
+        if (lastCalculatedWeek >= 0) {
+            const previousWeekData = calculateSummaryForWeek(lastCalculatedWeek, dailyProgress);
+            weeklySummary.weekData[lastCalculatedWeek] = previousWeekData;
+            console.log(`Summary calculated for Week ${lastCalculatedWeek + 1}`);
+        }
+        weeklySummary.lastCalculatedWeek = currentRoutineWeekIndex; // Update for the newly current week
         localStorage.setItem('weeklySummary', JSON.stringify(weeklySummary));
 
         // Clear daily progress for dates *before* the start of the newly current routine week
-        const routineStartDate = new Date(localStorage.getItem('routineStartDate'));
-        const currentWeekStartDate = new Date(routineStartDate);
-        currentWeekStartDate.setDate(routineStartDate.getDate() + (currentRoutineWeekIndex * 7));
-        currentWeekStartDate.setHours(0,0,0,0);
+        // Only clear if routineStartDate is set
+        const storedRoutineStartDate = localStorage.getItem('routineStartDate');
+        if (storedRoutineStartDate) {
+            const routineStartDate = new Date(storedRoutineStartDate);
+            const currentWeekStartDate = new Date(routineStartDate);
+            currentWeekStartDate.setDate(routineStartDate.getDate() + (currentRoutineWeekIndex * 7));
+            currentWeekStartDate.setHours(0,0,0,0);
 
-        for (const dateKey in dailyProgress) {
-            const date = new Date(dateKey);
-            if (date < currentWeekStartDate) {
-                delete dailyProgress[dateKey];
+            for (const dateKey in dailyProgress) {
+                const date = new Date(dateKey);
+                // Only delete if the date is strictly BEFORE the start of the current week
+                if (date < currentWeekStartDate) {
+                    delete dailyProgress[dateKey];
+                }
             }
+            localStorage.setItem('dailyProgress', JSON.stringify(dailyProgress));
         }
-        localStorage.setItem('dailyProgress', JSON.stringify(dailyProgress));
     }
-
 
     // Display summary for all completed weeks
     summaryContent.innerHTML = '';
@@ -929,28 +930,28 @@ function updateWeeklySummary() {
     summaryContent.appendChild(currentWeekPlaceholder);
 }
 
-
 /**
- * Calculates summary for a specific routine week.
+ * Calculates summary data for a specific routine week.
  * @param {number} weekIndex - The 0-indexed routine week to summarize.
  * @param {object} dailyProgressData - The full daily progress object from localStorage.
  * @returns {object} Summary data for the week.
  */
 function calculateSummaryForWeek(weekIndex, dailyProgressData) {
-    const startDate = new Date(localStorage.getItem('routineStartDate'));
+    const storedRoutineStartDate = localStorage.getItem('routineStartDate');
+    if (!storedRoutineStartDate) {
+        console.error("Routine start date not found in localStorage during summary calculation.");
+        return { totalSessions: 0, completedSessions: 0, totalExercisesCompleted: 0, totalExercisesMissed: 0 };
+    }
+    const startDate = new Date(storedRoutineStartDate);
+    
     // Ensure startDate is valid before proceeding
     if (isNaN(startDate.getTime())) {
         console.error("calculateSummaryForWeek called with invalid routineStartDate.");
-        return {
-            totalSessions: 0,
-            completedSessions: 0,
-            totalExercisesCompleted: 0,
-            totalExercisesMissed: 0
-        };
+        return { totalSessions: 0, completedSessions: 0, totalExercisesCompleted: 0, totalExercisesMissed: 0 };
     }
 
     const weekStartDate = new Date(startDate);
-    weekStartDate.setDate(startDate.getDate() + (weekIndex * 7)); // Start of the specific week
+    weekStartDate.setDate(startDate.getDate() + (weekIndex * WEEK_LENGTH)); // Start of the specific week
     weekStartDate.setHours(0,0,0,0);
 
     let totalSessions = 0;
@@ -958,20 +959,35 @@ function calculateSummaryForWeek(weekIndex, dailyProgressData) {
     let totalExercisesInWeek = 0;
     let totalExercisesCompleted = 0;
 
-    for (let d = 0; d < 7; d++) {
+    const weekRoutine = routine[weekIndex]; // Get the entire week's routine object
+    if (!weekRoutine || !weekRoutine.days) {
+        console.warn(`No routine data found for week index ${weekIndex}.`);
+        return { totalSessions: 0, completedSessions: 0, totalExercisesCompleted: 0, totalExercisesMissed: 0 };
+    }
+
+    for (let d = 0; d < WEEK_LENGTH; d++) { // Iterate through 7 days of the week
         const currentDayDate = new Date(weekStartDate);
         currentDayDate.setDate(weekStartDate.getDate() + d);
         const dayKey = currentDayDate.toISOString().split('T')[0];
 
-        const dayRoutine = routine[weekIndex]?.days?.[d]; // Use optional chaining for safety
+        // Convert standard JS day index 'd' to your routine's 0-indexed Monday system (Mon=0, Sun=6)
+        let routineDayIndex;
+        if (currentDayDate.getDay() === 0) { // If Sunday
+            routineDayIndex = 6;
+        } else {
+            routineDayIndex = currentDayDate.getDay() - 1;
+        }
 
-        if (dayRoutine && dayRoutine.length > 0) { // If there were exercises planned for this day
+        const dayRoutine = weekRoutine.days[routineDayIndex]; // Get the specific day's routine data
+
+        if (dayRoutine && dayRoutine.exercises && dayRoutine.exercises.length > 0) { // If there were main exercises planned for this day
             totalSessions++;
             const completedForDay = dailyProgressData[dayKey] || [];
-            totalExercisesInWeek += dayRoutine.length;
+            
+            totalExercisesInWeek += dayRoutine.exercises.length;
             totalExercisesCompleted += completedForDay.length;
 
-            if (completedForDay.length === dayRoutine.length) {
+            if (completedForDay.length === dayRoutine.exercises.length) {
                 completedSessions++;
             }
         }
@@ -985,7 +1001,6 @@ function calculateSummaryForWeek(weekIndex, dailyProgressData) {
     };
 }
 
-
 /**
  * Resets all routine progress and reloads the daily routine.
  * This effectively starts the routine from Week 1, Day 1.
@@ -995,90 +1010,144 @@ function resetAllProgress() {
         localStorage.removeItem('routineStartDate');
         localStorage.removeItem('dailyProgress');
         localStorage.removeItem('weeklySummary');
-        loadDailyRoutine(); // Re-initialize everything
+        
+        // Re-initialize the start date for the new beginning
+        initializeRoutineStartDate(); 
+        initializeWeeklyProgress(); // Re-initialize summary tracking
+
+        isShowingScheduledDay = false; // Reset flag to show today's routine
+        loadDailyRoutine(); // Re-initialize everything for the current day
         showTab('daily-routine-section'); // Go back to daily view
     }
 }
 
+/**
+ * Ensures the routine start date is stored in localStorage.
+ * If not present, it sets it to PROGRAM_START_DATE.
+ */
+function initializeRoutineStartDate() {
+    if (!localStorage.getItem('routineStartDate')) {
+        localStorage.setItem('routineStartDate', PROGRAM_START_DATE.toISOString().split('T')[0]);
+        console.log('Routine start date initialized:', PROGRAM_START_DATE.toISOString().split('T')[0]);
+    }
+}
 
+
+// ****************************
 // --- Tab Switching Logic ---
+// ****************************
+
+/**
+ * Handles switching between different application tabs.
+ * @param {string} tabId - The ID of the tab content section to display.
+ */
 function showTab(tabId) {
-    // Hide all tab contents first
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.style.display = 'none';
+    // Hide all tab content sections
+    document.querySelectorAll('.tab-content-section').forEach(section => {
+        section.classList.remove('active');
     });
 
-    // Deactivate all tabs
-    document.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.classList.remove('active');
+    // Deactivate all tab buttons
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
     });
 
     const targetSection = document.getElementById(tabId);
+    if (!targetSection) {
+        console.error(`Target section with ID '${tabId}' not found.`);
+        return;
+    }
 
     // Call content loading functions *before* displaying
     if (tabId === 'daily-routine-section') {
+        // If coming from a schedule click, showExercisesForDay would have set isShowingScheduledDay = true
+        // If coming from clicking the 'Today' tab directly, we want to reset it to false
+        if (!isShowingScheduledDay) { // This check prevents overriding if we just navigated from schedule
+            // isShowingScheduledDay = false; // This is now handled in the main tab click listener
+        }
         loadDailyRoutine(); // Ensure daily routine is always fresh
-    } else if (tabId === 'weekly-schedule-section') {
+    } else if (tabId === 'schedule-section') { // Changed from 'weekly-schedule-section' based on common HTML IDs
         loadWeeklySchedule();
-    } else if (tabId === 'weekly-summary-section') {
+        isShowingScheduledDay = false; // Reset when navigating to schedule directly
+    } else if (tabId === 'summary-section') { // Changed from 'weekly-summary-section'
         updateWeeklySummary();
-    } else if (tabId === 'back-exercises-section') { 
+        isShowingScheduledDay = false; // Reset when navigating to summary directly
+    } else if (tabId === 'back-exercises-section') {
         loadBackExercises();
+        isShowingScheduledDay = false; // Reset when navigating to back exercises directly
     }
     // 'full-routine-details' is static, so no function call needed
 
     // Now, show the selected tab content
-    targetSection.style.display = 'block';
+    targetSection.classList.add('active');
 
     // Activate the clicked tab button
-    // Ensure your nav-tabs have data-target matching your section IDs
-    const activeTabElement = document.querySelector(`.nav-tab[data-target="${tabId}"]`);
+    const activeTabElement = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
     if (activeTabElement) {
         activeTabElement.classList.add('active');
     } else {
-        console.warn(`No nav-tab found with data-target="${tabId}".`);
+        console.warn(`No tab-button found with data-tab="${tabId}".`);
     }
 }
 
+// *****************************************
 // --- Event Listeners and Initial Load ---
+// *****************************************
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- All your DOMContentLoaded code should go here, in ONE listener ---
+    // --- Assign DOM Elements after DOM is loaded ---
+    dateDisplay = document.getElementById('date-display');
+    currentWeekDisplay = document.getElementById('current-week-display');
+    currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display');
+    exerciseList = document.getElementById('exercise-list');
+    dailyProgressBarContainer = document.getElementById('daily-progress-container');
+    dailyProgressBar = document.getElementById('daily-progress-bar');
+    dailyProgressText = document.getElementById('daily-progress-text');
+    summaryContent = document.getElementById('summary-content');
+    resetWeekButton = document.getElementById('reset-week-button');
+    weekScheduleContent = document.getElementById('week-schedule-content'); // Assuming this exists for the schedule section
+    dailyNotesTextarea = document.getElementById('daily-notes-textarea');
+    saveNotesBtn = document.getElementById('save-notes-btn');
+    backExercisesList = document.getElementById('back-exercises-list');
+    dailyNotesSection = document.getElementById('daily-notes-section'); // Make sure this ID exists in your HTML
 
-    // Ensure dateDisplay is initialized *before* displayCurrentDate is called
-    // (If dateDisplay is a global const, this is fine, otherwise initialize it here)
-    // Example if it's not global: const dateDisplay = document.getElementById('date-display');
+    // --- Initial Setup and Event Listeners ---
 
-    // Call displayCurrentDate() here for initial load
-    displayCurrentDate(); // <--- Correct place to call it for initial page load
+    // Initialize the routine start date if it's not set
+    initializeRoutineStartDate();
+    // Initialize weekly summary tracking on app load
+    initializeWeeklyProgress();
 
-    // Existing event listeners and initial setup
-    resetWeekButton.addEventListener('click', resetAllProgress);
+    // Display current date immediately
+    displayCurrentDate();
+
+    // Add event listener for the reset week button
+    if (resetWeekButton) {
+        resetWeekButton.addEventListener('click', resetAllProgress);
+    }
 
     // Add event listeners for navbar tabs
-    document.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.addEventListener('click', (event) => {
-            const targetId = event.target.closest('.nav-tab').dataset.target;
+    document.querySelectorAll('.tab-button').forEach(button => { // Assuming class 'tab-button' for navigation
+        button.addEventListener('click', (event) => {
+            const tabId = event.target.closest('.tab-button').dataset.tab; // Get data-tab from the button
 
-            if (targetId === 'daily-routine-section') {
-                isShowingScheduledDay = false; // Reset the flag when user clicks 'Today' tab
-                loadDailyRoutine(); // Force load today's actual routine
-                displayCurrentDate(); // <--- Also call here if you want date to refresh on tab switch
+            if (tabId === 'daily-routine-section') {
+                isShowingScheduledDay = false; // Reset the flag when user clicks 'Today' tab directly
             }
-            showTab(targetId); // This will handle visibility and active class for all tabs
+            showTab(tabId); // This handles loading content and activating the tab
         });
     });
 
-    // NEW: Save notes on button click
-    if (saveNotesBtn) { // Ensure the element exists
+    // Save notes on button click (if you prefer explicit save)
+    if (saveNotesBtn) {
         saveNotesBtn.addEventListener('click', () => {
             const todayKey = new Date().toISOString().split('T')[0];
             saveDailyNotes(todayKey, dailyNotesTextarea.value);
-            alert('Notes saved!'); // Simple confirmation
+            alert('Notes saved!');
         });
     }
 
-    // Initial load for Today's Routine
+    // Initial load for Today's Routine when the app starts
     isShowingScheduledDay = false; // Ensure flag is false on initial load
-    showTab('daily-routine-section'); // This should trigger loadDailyRoutine() which updates content
+    showTab('daily-routine-section'); // This will trigger loadDailyRoutine() which updates content
 });
