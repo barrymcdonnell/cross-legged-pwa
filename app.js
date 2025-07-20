@@ -15,11 +15,16 @@ if ('serviceWorker' in navigator) {
 // Assume you have some way to define your weekly schedule, e.g.:
 const programStartDate = new Date('2025-07-14'); // Adjust to your actual program start
 const WEEK_LENGTH = 7; // Days in a week
-const PROGRAM_WEEKS = 8; // Total weeks in the program
+const PROGRAM_WEEKS = routine.length; // Total weeks in the program
 
 // Define a default weekly routine pattern (0=Sun, 1=Mon, ..., 6=Sat)
 // Example: Monday, Wednesday, Friday, Saturday are routine days
 const DEFAULT_WEEKLY_ROUTINE_PATTERN = [1, 3, 5];
+
+// A flag to indicate if daily-routine-section is currently showing a specific schedule day
+let isShowingScheduledDay = false;
+let selectedScheduleWeekIndex = 0; // Stores the week index of the clicked schedule day
+let selectedScheduleDayIndex = 0; // Stores the day index of the clicked schedule day
 
 let currentDisplayWeek = 0; // 0-indexed for program weeks
 
@@ -411,65 +416,101 @@ function displayCurrentDate() {
     }
 }
 
+// Helper to get days since program start
+function getDaysSinceProgramStart() {
+    const today = new Date();
+    // Normalize both dates to UTC midnight for accurate day difference
+    const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    const programStartUtc = Date.UTC(PROGRAM_START_DATE.getFullYear(), PROGRAM_START_DATE.getMonth(), PROGRAM_START_DATE.getDate());
+    
+    const diffTime = Math.abs(todayUtc - programStartUtc);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+}
+
 /**
  * Gets the current week number (0-indexed from the start date) and day of the week.
  * Stores the start date in localStorage if not present or invalid.
  * @returns {object} { week: number, dayOfWeek: number (0=Mon, 6=Sun), totalWeeks: number, isRoutineFinished: boolean }
  */
 function getCurrentRoutineProgress() {
-    const totalDaysElapsed = getDaysSinceProgramStart();
-    const currentWeekIndex = Math.floor(totalDaysElapsed / WEEK_LENGTH); // Assuming WEEK_LENGTH is 7
-    const currentDayInWeek = totalDaysElapsed % WEEK_LENGTH; // Day index within the current week (0-6)
-
-    console.log('getCurrentRoutineProgress - totalDaysElapsed:', totalDaysElapsed); 
-    console.log('getCurrentRoutineProgress - currentWeekIndex:', currentWeekIndex);
-    console.log('getCurrentRoutineProgress - currentDayInWeek:', currentDayInWeek);
+    const diffDays = getDaysSinceProgramStart();
+    const currentWeekIndex = Math.floor(diffDays / WEEK_LENGTH);
     
+    // JavaScript getDay() returns 0 for Sunday, 1 for Monday, ..., 6 for Saturday.
+    // Your 'routine.days' array has Monday at index 0.
+    let currentDayOfWeek = new Date().getDay(); 
+
+    // Convert JS's standard day index to your routine's 0-indexed Monday system
+    if (currentDayOfWeek === 0) { // If today is Sunday (JS index 0)
+        currentDayOfWeek = 6; // Map to index 6 in your routine.days array (where Sunday's data would be)
+    } else {
+        currentDayOfWeek--; // Shift Monday (1) to 0, Tuesday (2) to 1, etc.
+    }
+
     return {
-        week: currentWeekIndex,
-        day: currentDayInWeek, // This will be 0-indexed (Mon=0, Tue=1, etc. relative to program start day)
-        totalDaysElapsed: totalDaysElapsed
+        week: currentWeekIndex % PROGRAM_WEEKS, // Ensure week loops within your defined routine weeks
+        day: currentDayOfWeek // This is the routine-aligned day index (0=Mon, 1=Tue, ..., 6=Sun)
     };
 }
 
-/**
+/** LOGIC START
  * Loads exercises for the current day based on the routine.
  */
 function loadDailyRoutine() {
     const exerciseList = document.getElementById('exercise-list');
     const dailyProgressContainer = document.getElementById('daily-progress-container');
     const dailyNotesSection = document.getElementById('daily-notes-section'); // <--- Make sure you have an ID for your notes container
+    const currentWeekDisplay = document.getElementById('current-week-display'); // For "Week X"
+    const currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display'); // For "Day Y"
+    const dailyNotesTextarea = document.getElementById('daily-notes-textarea'); 
+
+    let weekIndexToLoad;
+    let routineDayIndexToLoad; // This will hold the 0-indexed Monday day for routine lookup
+    let displayDayName;       // This will hold the actual day name for the header (e.g., "Monday", "Sunday")
+    let displayWeekNumber;    // For "Week X" in the header
+
+    if (isShowingScheduledDay) {
+        // If coming from schedule click, use the stored indices
+        weekIndexToLoad = selectedScheduleWeekIndex;
+        routineDayIndexToLoad = selectedScheduleDayIndex; // This is already routine-aligned (Mon=0)
+        displayWeekNumber = weekIndexToLoad + 1;
+
+        // Convert the routine-aligned day index back to the standard dayNames index for display
+        // Example: routineDayIndex 0 (Monday) -> dayNames[1] (Monday)
+        // Example: routineDayIndex 6 (Sunday) -> dayNames[0] (Sunday)
+        displayDayName = dayNames[routineDayIndexToLoad === 6 ? 0 : routineDayIndexToLoad + 1];
+
+    } else {
+        // If loading for "Today" tab directly, get current progress
+        const { week, day } = getCurrentRoutineProgress(); // 'day' here is already routine-aligned (Mon=0)
+        weekIndexToLoad = week;
+        routineDayIndexToLoad = day;
+        displayWeekNumber = weekIndexToLoad + 1;
+        // Convert routine-aligned day index to standard dayNames index for display
+        displayDayName = dayNames[routineDayIndexToLoad === 6 ? 0 : routineDayIndexToLoad + 1];
+    }
     
     const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex } = getCurrentRoutineProgress();
     const todayKey = new Date().toISOString().split('T')[0];
 
-    const currentDayData = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex];
-
-    // Always display the calculated week and day numbers/names
+        // Always display the calculated week and day numbers/names
     if (currentWeekDisplay) {
-        currentWeekDisplay.textContent = `Week ${currentRoutineWeekIndex + 1}`;
+        currentWeekDisplay.textContent = `Week ${displayWeekNumber}`; 
     }
     if (currentDayOfWeekDisplay) {
-        // Using dayNames array for clarity (e.g., 'Friday')
-        currentDayOfWeekDisplay.textContent = ` ${currentDayInWeekIndex + 1} (${dayNames[currentDayInWeekIndex]})`;  
-        // Or if you prefer 'Day 5':
-        // currentDayOfWeekDisplay.textContent = `Day ${currentDayInWeekIndex + 1}`;
-    }
-    
-    if (!currentDayData) {
-        // Fallback for days beyond the routine or undefined days
-        exerciseList.innerHTML = '<p>No specific routine defined for today. Enjoy your day!</p>';
-        dailyProgressContainer.style.display = 'none';
-        dailyNotesSection.style.display = 'none';
-        return;
+        currentDayOfWeekDisplay.textContent = displayDayName; 
     }
 
+    const currentDayData = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex];
+    const todayKey = new Date().toISOString().split('T')[0]; 
+    
     const dailyWarmup = currentDayData.warmup || []; // Get warm-up exercises
     const dailyExercises = currentDayData.exercises || []; // Get main exercises
 
     let htmlContent = '';
 
-    // NEW: Display Warm-up Exercises
+    // Display Warm-up Exercises
     if (currentDayData.warmup && currentDayData.warmup.length > 0) {
         htmlContent += '<div class="warmup-section">'; // Added a div for styling the whole section
         htmlContent += '<h3>Warmup</h3>';
@@ -781,22 +822,6 @@ function showNextWeek() {
         loadWeeklySchedule();
     }
 }
-
-// Helper to get days since program start
-function getDaysSinceProgramStart() {
-    const today = new Date();
-    // Normalize dates to start of day to avoid time differences affecting calculation
-    const start = new Date(programStartDate.getFullYear(), programStartDate.getMonth(), programStartDate.getDate());
-    const current = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
-    const diffTime = current - start; // Difference in milliseconds
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Convert to days
-
-    return diffDays; // 0 for the start day, 1 for the next day, etc.
-}
-
-// A flag to indicate if daily-routine-section is currently showing a specific schedule day
-let isShowingScheduledDay = false;
 
 // --- New function to display exercises for a specific day ---
 function showExercisesForDay(weekIndex, dayIndex) {
