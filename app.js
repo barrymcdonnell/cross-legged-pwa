@@ -16,7 +16,7 @@ if ('serviceWorker' in navigator) {
 // ************************
 
 // Ensure PROGRAM_START_DATE is defined before any function that uses it
-const PROGRAM_START_DATE = new Date('2025-07-14T00:00:00Z'); // Adjust to your actual program start, ensure ISO format for consistency
+const PROGRAM_START_DATE = new Date('2025-07-20T00:00:00Z'); // Adjust to your actual program start, ensure ISO format for consistency
 const WEEK_LENGTH = 7; // Days in a week
 
 // Define a default weekly routine pattern (0=Sun, 1=Mon, ..., 6=Sat) - currently unused but kept for context
@@ -433,12 +433,20 @@ function getDaysSinceProgramStart() {
     const today = new Date();
     // Normalize both dates to UTC midnight for accurate day difference
     const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-    const programStartUtc = Date.UTC(programStartDate.getFullYear(), programStartDate.getMonth(), programStartDate.getDate());
+    const programStartUtc = Date.UTC(PROGRAM_START_DATE.getFullYear(), PROGRAM_START_DATE.getMonth(), PROGRAM_START_DATE.getDate());
     
     const diffTime = Math.abs(todayUtc - programStartUtc);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
 }
+
+// In getDaysSinceProgramStart() function:
+console.log('Value of PROGRAM_START_DATE in getDaysSinceProgramStart:', PROGRAM_START_DATE);
+// ...
+console.log('Days since program start (calculated):', diffDays);
+
+// In loadDailyRoutine() function, after currentDayData is assigned:
+console.log('Retrieved currentDayData:', currentDayData);
 
 /**
  * Gets the current week number (0-indexed from the start date) and day of the week.
