@@ -1146,8 +1146,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- NEW: App Version Note ---
     const appVersion = "1.0.0"; // <<< MANUALLY UPDATE THIS VERSION NUMBER
     const appVersionElement = document.getElementById('app-version');
+
+    // --- NEW LOG ---
+    console.log("Attempting to find app-version element:", appVersionElement);
+    // --- END NEW LOG ---
     if (appVersionElement) {
         appVersionElement.textContent = appVersion;
+        console.log("App version set successfully!"); // Another new log
+    } else {
+        console.error("Error: app-version element not found in DOM!"); // Another new log
     }
 
     // Add event listener for the reset week button
