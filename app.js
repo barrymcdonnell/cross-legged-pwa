@@ -634,7 +634,7 @@ function loadDailyRoutine() {
             const exerciseName = event.target.dataset.exercise;
             const isChecked = event.target.checked;
             toggleExerciseComplete(todayKey, exerciseName, isChecked); // Correct arguments
-            updateDailyProgressBar(); // Update progress bar when an exercise is ticked
+            updateDailyProgressBar(weekIndexToLoad, routineDayIndexToLoad); // Update progress bar when an exercise is ticked
             
             // Update the list item class immediately for visual feedback
             const listItem = event.target.closest('li');
@@ -652,7 +652,7 @@ function loadDailyRoutine() {
         dailyNotesTextarea.addEventListener('input', dailyNotesInputHandler);
     }
     
-    updateDailyProgressBar(); // Always update progress bar
+    updateDailyProgressBar(weekIndexToLoad, routineDayIndexToLoad); // Always update progress bar
 }
 
 // Handler for daily notes textarea input
@@ -664,7 +664,7 @@ function dailyNotesInputHandler() {
 /**
  * Updates the daily progress bar and text.
  */
-function updateDailyProgressBar() {
+function updateDailyProgressBar(week, day) {
     if (!dailyProgressBar || !dailyProgressText || !dailyProgressContainer) {
         console.error("Progress bar DOM elements not initialized.");
         return;
