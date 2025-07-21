@@ -954,6 +954,7 @@ function updateWeeklySummary() {
  * @returns {object} Summary data for the week.
  */
 function calculateSummaryForWeek(weekIndex, dailyProgressData) {
+    console.log("calculateSummaryForWeek is running...")
     const storedRoutineStartDate = localStorage.getItem('routineStartDate');
     if (!storedRoutineStartDate) {
         console.error("Routine start date not found in localStorage during summary calculation.");
