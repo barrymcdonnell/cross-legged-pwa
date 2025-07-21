@@ -180,19 +180,19 @@ main {
 }
 
 /* Specific day-card states */
+.day-card.scheduled {
+    background-color: #e0f2f7; /* Light blue for scheduled days */
+    border-color: #b3e5fc;
+    border-width: 1px; 
+    border-style: solid;
+}
+
 .day-card.current-day {
     border-color: #FF5722; /* Orange for current day */
     background-color: #fffaf0; /* Lighter orange background */
     box-shadow: 0 4px 8px rgba(255, 87, 34, 0.3);
     border-width: 2px; 
     border-style: solid; 
-}
-
-.day-card.scheduled {
-    background-color: #e0f2f7; /* Light blue for scheduled days */
-    border-color: #b3e5fc;
-    border-width: 1px; 
-    border-style: solid;
 }
 
 .day-card.completed {
