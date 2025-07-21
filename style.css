@@ -227,7 +227,7 @@ main {
     /* background-color: transparent; <-- REMOVE THIS LINE if you want #e0e0e0 from the container to show through for Firefox track */
     border-radius: 5px; /* Match the container's border-radius */
     vertical-align: middle;
-    border-color: red;
+    border: 2px solid red;
 }
 
 /* Styles for the TRACK (the empty part) for WebKit browsers */
