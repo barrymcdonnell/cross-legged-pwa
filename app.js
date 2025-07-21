@@ -674,7 +674,7 @@ function updateDailyProgressBar(week, day) {
     const todayKey = new Date().toISOString().split('T')[0];
 
     // Get the specific day's data from the routine
-    const currentDayData = routine[weekIndexToLoad]?.days?.[routineDayIndexToLoad];
+    const currentDayData = routine[week]?.days?.[day];
 
     // Handle cases where there's no routine data for the day (e.g., rest day or null entry)
     if (!currentDayData || !currentDayData.exercises || currentDayData.exercises.length === 0) {
