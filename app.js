@@ -867,6 +867,7 @@ function initializeWeeklyProgress() {
  * Clears old daily progress data when a new week starts.
  */
 function updateWeeklySummary() {
+    console.log("updateWeeklySummary is running...")
     if (!summaryContent || !resetWeekButton) {
         console.error("Summary DOM elements not initialized.");
         return;
