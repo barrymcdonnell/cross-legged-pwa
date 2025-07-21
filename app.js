@@ -493,6 +493,14 @@ function toggleExerciseComplete(dateKey, exerciseName, isCompleted) {
 
     progress[dateKey] = dailyCompleted;
     localStorage.setItem('dailyProgress', JSON.stringify(progress));
+    
+    // --- NEW: Update the progress bar after data changes ---
+    // Assuming updateDailyProgressBar gets its week/day context from getCurrentRoutineProgress()
+    // or from the global currentRoutineWeekIndex, currentDayInWeekIndex if defined.
+    // If updateDailyProgressBar expects parameters, ensure they are passed correctly.
+    const { week: currentRoutineWeekIndex, day: currentDayInWeekIndex } = getCurrentRoutineProgress();
+    updateDailyProgressBar(currentRoutineWeekIndex, currentDayInWeekIndex);
+    // --- END NEW ---
 }
 
 /**
@@ -1131,7 +1139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     displayCurrentDate();
 
     // --- NEW: App Version Note ---
-    const appVersion = "1.0.1.1"; // <<< MANUALLY UPDATE THIS VERSION NUMBER
+    const appVersion = "1.0.1.2"; // <<< MANUALLY UPDATE THIS VERSION NUMBER
     const appVersionElement = document.getElementById('app-version');
 
     if (appVersionElement) {
