@@ -1143,6 +1143,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Display current date immediately
     displayCurrentDate();
 
+    // --- NEW: App Version Note ---
+    const appVersion = "1.0.0"; // <<< MANUALLY UPDATE THIS VERSION NUMBER
+    const appVersionElement = document.getElementById('app-version');
+    if (appVersionElement) {
+        appVersionElement.textContent = appVersion;
+    }
+
     // Add event listener for the reset week button
     if (resetWeekButton) {
         resetWeekButton.addEventListener('click', resetAllProgress);
