@@ -1131,7 +1131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     displayCurrentDate();
 
     // --- NEW: App Version Note ---
-    const appVersion = "1.0.1"; // <<< MANUALLY UPDATE THIS VERSION NUMBER
+    const appVersion = "1.0.1.1"; // <<< MANUALLY UPDATE THIS VERSION NUMBER
     const appVersionElement = document.getElementById('app-version');
 
     if (appVersionElement) {
