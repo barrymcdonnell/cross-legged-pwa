@@ -398,6 +398,7 @@ let dateDisplay;
 let currentWeekDisplay;
 let currentDayOfWeekDisplay;
 let exerciseList;
+let dailyProgressContainer;
 let dailyProgressBarContainer;
 let dailyProgressBar;
 let dailyProgressText;
@@ -1107,6 +1108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentWeekDisplay = document.getElementById('current-week-display');
     currentDayOfWeekDisplay = document.getElementById('current-day-of-week-display');
     exerciseList = document.getElementById('exercise-list');
+    dailyProgressContainer = document.getElementById('daily-progress-container');
     dailyProgressBarContainer = document.getElementById('daily-progress-container');
     dailyProgressBar = document.getElementById('daily-progress-bar');
     dailyProgressText = document.getElementById('daily-progress-text');
