@@ -214,10 +214,6 @@ main {
     border-radius: 5px;
     margin-top: 10px;
     overflow: hidden; /* Important for border-radius on the native bar */
-    /* ADD THE BORDER HERE */
-    border: 2px solid green; /* Your desired border */
-    /* Ensure the border is included in the height calculation */
-    box-sizing: border-box;
     line-height: 0; /* ADD THIS: Eliminates any default line height that might push content down */
     font-size: 0;
 }
