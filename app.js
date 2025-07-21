@@ -562,7 +562,7 @@ function loadDailyRoutine() {
 
     // Update the display elements based on what is being LOADED/DISPLAYED
     currentWeekDisplay.textContent = `Week ${displayWeekNumber}`;
-    currentDayOfWeekDisplay.textContent = `Day ${displayDayNumber} (${displayDayName})`;
+    currentDayOfWeekDisplay.textContent = ` ${displayDayNumber} (${displayDayName})`;
 
     // Fetch the routine data using the CORRECTLY DETERMINED routine-aligned indices
     const currentDayData = routine[weekIndexToLoad]?.days?.[routineDayIndexToLoad];
@@ -1131,7 +1131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     displayCurrentDate();
 
     // --- NEW: App Version Note ---
-    const appVersion = "1.0.1.4"; // <<< MANUALLY UPDATE THIS VERSION NUMBER
+    const appVersion = "1.0.1.5"; // <<< MANUALLY UPDATE THIS VERSION NUMBER
     const appVersionElement = document.getElementById('app-version');
 
     if (appVersionElement) {
