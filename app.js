@@ -656,6 +656,10 @@ function dailyNotesInputHandler() {
  * Updates the daily progress bar and text.
  */
 function updateDailyProgressBar(week, day) {
+    console.log("--- updateDailyProgressBar called ---");
+    console.log("dailyProgressBar element:", dailyProgressBar); // Check if this is null
+    console.log("dailyProgressText element:", dailyProgressText); // Check if this is null
+    console.log("dailyProgressContainer element:", dailyProgressContainer); // Check if this is null
     if (!dailyProgressBar || !dailyProgressText || !dailyProgressContainer) {
         console.error("Progress bar DOM elements not initialized.");
         return;
@@ -666,6 +670,7 @@ function updateDailyProgressBar(week, day) {
 
     // Get the specific day's data from the routine
     const currentDayData = routine[week]?.days?.[day];
+    console.log("currentDayData for progress bar:", currentDayData); // Check content
 
     // Handle cases where there's no routine data for the day (e.g., rest day or null entry)
     if (!currentDayData || !currentDayData.exercises || currentDayData.exercises.length === 0) {
@@ -676,6 +681,9 @@ function updateDailyProgressBar(week, day) {
     const totalExercises = currentDayData.exercises.length;
     const completedExercises = getDailyProgress(todayKey); // This should return an array of completed exercises
     const completedCount = completedExercises.length;
+
+    console.log("Total exercises:", totalExercises); // Check this value
+    console.log("Completed exercises count:", completedCount); 
 
     // Show the progress bar container if there's a routine
     dailyProgressContainer.style.display = 'block';
@@ -688,10 +696,12 @@ function updateDailyProgressBar(week, day) {
         dailyProgressBar.max = totalExercises;
         let percentage = (completedCount / totalExercises) * 100;
         dailyProgressText.textContent = `${completedCount}/${totalExercises} exercises complete (${percentage.toFixed(0)}%)`;
+        console.log(`Progress bar updated: value=${completedCount}, max=${totalExercises}, percentage=${percentage.toFixed(0)}%`);
     } else {
         dailyProgressBar.max = 1; // Set a default max to avoid errors
         dailyProgressBar.value = 0;
         dailyProgressText.textContent = `No exercises planned for today.`;
+        console.log("Progress bar: No exercises planned.");
     }
 }
 
