@@ -433,7 +433,7 @@ function getDaysSinceProgramStart() {
     const today = new Date();
     // Normalize both dates to UTC midnight for accurate day difference
     const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-    const programStartUtc = Date.UTC(PROGRAM_START_DATE.getFullYear(), PROGRAM_START_DATE.getMonth(), PROGRAM_START_DATE.getDate());
+    const programStartUtc = Date.UTC(programStartDate.getFullYear(), programStartDate.getMonth(), programStartDate.getDate());
     
     const diffTime = Math.abs(todayUtc - programStartUtc);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
@@ -666,7 +666,7 @@ function updateDailyProgressBar() {
     const todayKey = new Date().toISOString().split('T')[0];
 
     // Get the specific day's data from the routine
-    const currentDayData = routine[currentRoutineWeekIndex]?.days?.[currentDayInWeekIndex];
+    const currentDayData = routine[weekIndexToLoad]?.days?.[routineDayIndexToLoad];
 
     // Handle cases where there's no routine data for the day (e.g., rest day or null entry)
     if (!currentDayData || !currentDayData.exercises || currentDayData.exercises.length === 0) {
