@@ -1074,10 +1074,10 @@ function showTab(tabId) {
             // isShowingScheduledDay = false; // This is now handled in the main tab click listener
         }
         loadDailyRoutine(); // Ensure daily routine is always fresh
-    } else if (tabId === 'schedule-section') { // Changed from 'weekly-schedule-section' based on common HTML IDs
+    } else if (tabId === 'weekly-schedule-section') { // Changed from 'weekly-schedule-section' based on common HTML IDs
         loadWeeklySchedule();
         isShowingScheduledDay = false; // Reset when navigating to schedule directly
-    } else if (tabId === 'summary-section') { // Changed from 'weekly-summary-section'
+    } else if (tabId === 'weekly-summary-section') { // Changed from 'weekly-summary-section'
         updateWeeklySummary();
         isShowingScheduledDay = false; // Reset when navigating to summary directly
     } else if (tabId === 'back-exercises-section') {
