@@ -874,7 +874,10 @@ function updateWeeklySummary() {
     }
 
     const today = new Date();
+    console.log(`Date created is ${today}`);
+    console.log("Just before getCurrentRoutineProgress gets called")
     const { week: currentRoutineWeekIndex } = getCurrentRoutineProgress();
+    console.log("getCurrentRoutineProgress has been called")
     let weeklySummary = JSON.parse(localStorage.getItem('weeklySummary')) || { lastCalculatedWeek: -1, weekData: {} };
     let dailyProgress = JSON.parse(localStorage.getItem('dailyProgress')) || {};
 
