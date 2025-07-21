@@ -1136,14 +1136,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Add event listeners for navbar tabs
-    document.querySelectorAll('.tab-button').forEach(button => { // Assuming class 'tab-button' for navigation
-        button.addEventListener('click', (event) => {
-            const tabId = event.target.closest('.tab-button').dataset.tab; // Get data-tab from the button
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', (event) => {
+            // Get the targetId from the button's data-target attribute
+            const targetId = event.target.closest('.nav-tab').dataset.target;
 
-            if (tabId === 'daily-routine-section') {
-                isShowingScheduledDay = false; // Reset the flag when user clicks 'Today' tab directly
+            // Log to confirm the click is registered and targetId is correct
+            console.log('Tab clicked! Target ID:', targetId);
+
+            if (targetId === 'daily-routine-section') {
+                isShowingScheduledDay = false; // Reset the flag when user clicks 'Today' tab
+                loadDailyRoutine(); // Force load today's actual routine
+                displayCurrentDate(); // <--- Also call here if you want date to refresh on tab switch
+            } else if (targetId === 'weekly-schedule-section') { // This should match HTML ID
+                 loadWeeklySchedule();
+                 isShowingScheduledDay = false; // Reset when navigating to schedule directly
+            } else if (targetId === 'weekly-summary-section') { // This should match HTML ID
+                 updateWeeklySummary();
+                 isShowingScheduledDay = false; // Reset when navigating to summary directly
+            } else if (targetId === 'back-exercises-section') { // This should match HTML ID
+                 loadBackExercises();
+                 isShowingScheduledDay = false; // Reset when navigating to back exercises directly
             }
-            showTab(tabId); // This handles loading content and activating the tab
+            // 'full-routine-details' (if it's a tab) is static, no function call needed here
+
+            showTab(targetId); // Call the showTab function to manage visibility and active classes
         });
     });
 
