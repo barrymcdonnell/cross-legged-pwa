@@ -437,13 +437,7 @@ function getDaysSinceProgramStart() {
     const diffTime = Math.abs(todayUtc - programStartUtc);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
-    console.log('Days since program start (calculated):', diffDays);
 }
-
-// In getDaysSinceProgramStart() function:
-console.log('Value of PROGRAM_START_DATE in getDaysSinceProgramStart:', PROGRAM_START_DATE);
-
-
 
 /**
  * Gets the current week number (0-indexed from the start date) and day of the week.
@@ -562,10 +556,7 @@ function loadDailyRoutine() {
 
     // Fetch the routine data using the CORRECTLY DETERMINED routine-aligned indices
     const currentDayData = routine[weekIndexToLoad]?.days?.[routineDayIndexToLoad];
-    
-    // In loadDailyRoutine() function, after currentDayData is assigned:
-    console.log('Retrieved currentDayData:', currentDayData);
-    
+        
     // The key for saving progress/notes is always based on *actual today's date*,
     // because you only complete exercises *today*, regardless of what day you're viewing.
     const todayKey = new Date().toISOString().split('T')[0];
@@ -757,9 +748,7 @@ function loadWeeklySchedule() {
         console.error("Error: 'week-schedule-grid' element not found in the DOM.");
         return;
     }
-    console.log("1. weekScheduleGrid element:", weekScheduleGrid);
     weekScheduleGrid.innerHTML = ''; // Clear previous content
-    console.log("2. Current Display Week:", currentDisplayWeek); // Check its value
     const today = new Date();
     const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, etc.
 
@@ -787,19 +776,12 @@ function loadWeeklySchedule() {
             routineDayIndex = i - 1; // Shift by one: Mon (1) -> 0, Tue (2) -> 1, etc.
         }
 
-        console.log(`3. Processing Day: ${dayNames[i]} (JS index: ${i}, Routine index: ${routineDayIndex})`); // Verify day names/indices
-        console.log("4. Week routine data:", routine[currentDisplayWeek]); // Check if routine[week] is undefined
-        
-        
         const weekRoutineData = routine[currentDisplayWeek];
         const dayData = weekRoutineData && weekRoutineData.days ? weekRoutineData.days[routineDayIndex] : null;
 
         let statusText;
         let statusClass;
 
-        console.log("5. Day data:", dayData); // Crucial: check if this is null for all days
-        console.log("6. Status:", statusText, statusClass); // See what status is being calculated
-        
         if (dayData && (dayData.warmup?.length > 0 || dayData.exercises?.length > 0)) {
             dayCard.classList.add('scheduled'); // Add a class for styling workout days
             statusText = 'Workout Day';
@@ -867,17 +849,14 @@ function initializeWeeklyProgress() {
  * Clears old daily progress data when a new week starts.
  */
 function updateWeeklySummary() {
-    console.log("updateWeeklySummary: summaryContent element:", summaryContent);
     if (!summaryContent || !resetWeekButton) {
         console.error("Summary DOM elements not initialized.");
         return;
     }
 
     const today = new Date();
-    console.log(`Date created is ${today}`);
-    console.log("Just before getCurrentRoutineProgress gets called")
     const { week: currentRoutineWeekIndex } = getCurrentRoutineProgress();
-    console.log("getCurrentRoutineProgress has been called")
+    
     let weeklySummary = JSON.parse(localStorage.getItem('weeklySummary')) || { lastCalculatedWeek: -1, weekData: {} };
     let dailyProgress = JSON.parse(localStorage.getItem('dailyProgress')) || {};
 
@@ -891,7 +870,6 @@ function updateWeeklySummary() {
         if (lastCalculatedWeek >= 0) {
             const previousWeekData = calculateSummaryForWeek(lastCalculatedWeek, dailyProgress);
             weeklySummary.weekData[lastCalculatedWeek] = previousWeekData;
-            console.log(`Summary calculated for Week ${lastCalculatedWeek + 1}`);
         }
         weeklySummary.lastCalculatedWeek = currentRoutineWeekIndex; // Update for the newly current week
         localStorage.setItem('weeklySummary', JSON.stringify(weeklySummary));
@@ -957,7 +935,6 @@ function updateWeeklySummary() {
  * @returns {object} Summary data for the week.
  */
 function calculateSummaryForWeek(weekIndex, dailyProgressData) {
-    console.log("calculateSummaryForWeek is running...")
     const storedRoutineStartDate = localStorage.getItem('routineStartDate');
     if (!storedRoutineStartDate) {
         console.error("Routine start date not found in localStorage during summary calculation.");
@@ -1147,14 +1124,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const appVersion = "1.0.1"; // <<< MANUALLY UPDATE THIS VERSION NUMBER
     const appVersionElement = document.getElementById('app-version');
 
-    // --- NEW LOG ---
-    console.log("Attempting to find app-version element:", appVersionElement);
-    // --- END NEW LOG ---
     if (appVersionElement) {
         appVersionElement.textContent = appVersion;
-        console.log("App version set successfully!"); // Another new log
-    } else {
-        console.error("Error: app-version element not found in DOM!"); // Another new log
+     
     }
 
     // Add event listener for the reset week button
