@@ -789,8 +789,7 @@ function loadWeeklySchedule() {
 
         console.log(`3. Processing Day: ${dayNames[i]} (JS index: ${i}, Routine index: ${routineDayIndex})`); // Verify day names/indices
         console.log("4. Week routine data:", routine[currentDisplayWeek]); // Check if routine[week] is undefined
-        console.log("5. Day data:", dayData); // Crucial: check if this is null for all days
-        console.log("6. Status:", statusText, statusClass); // See what status is being calculated
+        
         
         const weekRoutineData = routine[currentDisplayWeek];
         const dayData = weekRoutineData && weekRoutineData.days ? weekRoutineData.days[routineDayIndex] : null;
@@ -798,6 +797,9 @@ function loadWeeklySchedule() {
         let statusText;
         let statusClass;
 
+        console.log("5. Day data:", dayData); // Crucial: check if this is null for all days
+        console.log("6. Status:", statusText, statusClass); // See what status is being calculated
+        
         if (dayData && (dayData.warmup?.length > 0 || dayData.exercises?.length > 0)) {
             dayCard.classList.add('scheduled'); // Add a class for styling workout days
             statusText = 'Workout Day';
