@@ -757,8 +757,9 @@ function loadWeeklySchedule() {
         console.error("Error: 'week-schedule-grid' element not found in the DOM.");
         return;
     }
+    console.log("1. weekScheduleGrid element:", weekScheduleGrid);
     weekScheduleGrid.innerHTML = ''; // Clear previous content
-
+    console.log("2. Current Display Week:", currentDisplayWeek); // Check its value
     const today = new Date();
     const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, etc.
 
@@ -777,7 +778,10 @@ function loadWeeklySchedule() {
         if (i === currentDayOfWeek && currentDisplayWeek === Math.floor(getDaysSinceProgramStart() / WEEK_LENGTH)) {
             dayCard.classList.add('current-day');
         }
-
+        console.log(`3. Processing Day: ${dayNames[i]} (JS index: ${i}, Routine index: ${routineDayIndex})`); // Verify day names/indices
+        console.log("4. Week routine data:", routine[currentDisplayWeek]); // Check if routine[week] is undefined
+        console.log("5. Day data:", dayData); // Crucial: check if this is null for all days
+        console.log("6. Status:", statusText, statusClass); // See what status is being calculated
         // Convert the standard 'i' (0=Sun, 1=Mon) to your routine's day index (0=Mon, 1=Tue)
         let routineDayIndex;
         if (i === 0) { // If 'i' is 0 (Sunday)
