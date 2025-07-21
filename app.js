@@ -540,6 +540,7 @@ function loadDailyRoutine() {
     let routineDayIndexToLoad; // This will hold the 0-indexed Monday day for routine lookup
     let displayDayName;       // This will hold the actual day name for the header (e.g., "Monday", "Sunday")
     let displayWeekNumber;    // For "Week X" in the header
+    let displayDayNumber;     // For "Day X" in the header
 
     // Determine which day's routine to load: today's or a scheduled day's
     if (isShowingScheduledDay) {
@@ -557,10 +558,11 @@ function loadDailyRoutine() {
     displayWeekNumber = weekIndexToLoad + 1;
     // Convert routine-aligned day index back to the standard dayNames index (0=Sun, 1=Mon...) for display
     displayDayName = dayNames[routineDayIndexToLoad === 6 ? 0 : routineDayIndexToLoad + 1];
+    displayDayNumber = routineDayIndexToLoad + 1;
 
     // Update the display elements based on what is being LOADED/DISPLAYED
     currentWeekDisplay.textContent = `Week ${displayWeekNumber}`;
-    currentDayOfWeekDisplay.textContent = displayDayName;
+    currentDayOfWeekDisplay.textContent = `Day ${displayDayNumber} (${displayDayName})`;
 
     // Fetch the routine data using the CORRECTLY DETERMINED routine-aligned indices
     const currentDayData = routine[weekIndexToLoad]?.days?.[routineDayIndexToLoad];
@@ -1129,7 +1131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     displayCurrentDate();
 
     // --- NEW: App Version Note ---
-    const appVersion = "1.0.1.3"; // <<< MANUALLY UPDATE THIS VERSION NUMBER
+    const appVersion = "1.0.1.4"; // <<< MANUALLY UPDATE THIS VERSION NUMBER
     const appVersionElement = document.getElementById('app-version');
 
     if (appVersionElement) {
