@@ -215,9 +215,11 @@ main {
     margin-top: 10px;
     overflow: hidden; /* Important for border-radius on the native bar */
     /* ADD THE BORDER HERE */
-    border: 2px solid blue; /* Your desired border */
+    border: 2px solid green; /* Your desired border */
     /* Ensure the border is included in the height calculation */
-    box-sizing: border-box; 
+    box-sizing: border-box;
+    line-height: 0; /* ADD THIS: Eliminates any default line height that might push content down */
+    font-size: 0;
 }
 
 #daily-progress-bar {
@@ -230,6 +232,9 @@ main {
     border: none;             /* Remove any default borders */
     border-radius: 5px; /* Match the container's border-radius */
     vertical-align: middle;
+    display: block; /* ADD THIS: Forces it to behave as a block-level element, often resolves alignment quirks */
+    margin: 0; /* ADD THIS: Ensure no default margins are pushing it down */
+    padding: 0;
 }
 
 /* Styles for the TRACK (the empty part) for WebKit browsers */
