@@ -442,8 +442,7 @@ function getDaysSinceProgramStart() {
 // In getDaysSinceProgramStart() function:
 console.log('Value of PROGRAM_START_DATE in getDaysSinceProgramStart:', PROGRAM_START_DATE);
 
-// In loadDailyRoutine() function, after currentDayData is assigned:
-console.log('Retrieved currentDayData:', currentDayData);
+
 
 /**
  * Gets the current week number (0-indexed from the start date) and day of the week.
@@ -562,6 +561,9 @@ function loadDailyRoutine() {
 
     // Fetch the routine data using the CORRECTLY DETERMINED routine-aligned indices
     const currentDayData = routine[weekIndexToLoad]?.days?.[routineDayIndexToLoad];
+    
+    // In loadDailyRoutine() function, after currentDayData is assigned:
+    console.log('Retrieved currentDayData:', currentDayData);
     
     // The key for saving progress/notes is always based on *actual today's date*,
     // because you only complete exercises *today*, regardless of what day you're viewing.
