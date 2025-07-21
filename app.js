@@ -436,12 +436,11 @@ function getDaysSinceProgramStart() {
     const diffTime = Math.abs(todayUtc - programStartUtc);
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+    console.log('Days since program start (calculated):', diffDays);
 }
 
 // In getDaysSinceProgramStart() function:
 console.log('Value of PROGRAM_START_DATE in getDaysSinceProgramStart:', PROGRAM_START_DATE);
-// ...
-console.log('Days since program start (calculated):', diffDays);
 
 // In loadDailyRoutine() function, after currentDayData is assigned:
 console.log('Retrieved currentDayData:', currentDayData);
