@@ -214,6 +214,10 @@ main {
     border-radius: 5px;
     margin-top: 10px;
     overflow: hidden; /* Important for border-radius on the native bar */
+    /* ADD THE BORDER HERE */
+    border: 2px solid blue; /* Your desired border */
+    /* Ensure the border is included in the height calculation */
+    box-sizing: border-box; 
 }
 
 #daily-progress-bar {
@@ -224,15 +228,13 @@ main {
     -moz-appearance: none;    /* Remove default Mozilla styling */
     appearance: none;         /* Standard property */
     border: none;             /* Remove any default borders */
-    /* background-color: transparent; <-- REMOVE THIS LINE if you want #e0e0e0 from the container to show through for Firefox track */
     border-radius: 5px; /* Match the container's border-radius */
     vertical-align: middle;
-    border: 2px solid blue;
 }
 
 /* Styles for the TRACK (the empty part) for WebKit browsers */
 #daily-progress-bar::-webkit-progress-bar {
-    background-color: #e0e0e0; /* Light gray for the track */
+    background-color: transparent;
     border-radius: 5px;
 }
 
