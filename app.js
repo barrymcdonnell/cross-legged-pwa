@@ -22,8 +22,6 @@ const WEEK_LENGTH = 7; // Days in a week
 // Define a default weekly routine pattern (0=Sun, 1=Mon, ..., 6=Sat) - currently unused but kept for context
 const DEFAULT_WEEKLY_ROUTINE_PATTERN = [1, 3, 5];
 
-let currentDisplayWeek = 0; // 0-indexed for program weeks
-
 // **********************
 // --- EXERCISE DATA ---
 // **********************
