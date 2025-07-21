@@ -1051,12 +1051,12 @@ function initializeRoutineStartDate() {
  */
 function showTab(tabId) {
     // Hide all tab content sections
-    document.querySelectorAll('.tab-content-section').forEach(section => {
+    document.querySelectorAll('.tab-content').forEach(section => {
         section.classList.remove('active');
     });
 
     // Deactivate all tab buttons
-    document.querySelectorAll('.tab-button').forEach(button => {
+    document.querySelectorAll('.nav-tab').forEach(button => {
         button.classList.remove('active');
     });
 
@@ -1090,7 +1090,7 @@ function showTab(tabId) {
     targetSection.classList.add('active');
 
     // Activate the clicked tab button
-    const activeTabElement = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+    const activeTabElement = document.querySelector(`.nav-tab[data-target="${tabId}"]`);
     if (activeTabElement) {
         activeTabElement.classList.add('active');
     } else {
