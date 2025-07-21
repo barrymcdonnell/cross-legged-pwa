@@ -778,10 +778,7 @@ function loadWeeklySchedule() {
         if (i === currentDayOfWeek && currentDisplayWeek === Math.floor(getDaysSinceProgramStart() / WEEK_LENGTH)) {
             dayCard.classList.add('current-day');
         }
-        console.log(`3. Processing Day: ${dayNames[i]} (JS index: ${i}, Routine index: ${routineDayIndex})`); // Verify day names/indices
-        console.log("4. Week routine data:", routine[currentDisplayWeek]); // Check if routine[week] is undefined
-        console.log("5. Day data:", dayData); // Crucial: check if this is null for all days
-        console.log("6. Status:", statusText, statusClass); // See what status is being calculated
+   
         // Convert the standard 'i' (0=Sun, 1=Mon) to your routine's day index (0=Mon, 1=Tue)
         let routineDayIndex;
         if (i === 0) { // If 'i' is 0 (Sunday)
@@ -790,6 +787,11 @@ function loadWeeklySchedule() {
             routineDayIndex = i - 1; // Shift by one: Mon (1) -> 0, Tue (2) -> 1, etc.
         }
 
+        console.log(`3. Processing Day: ${dayNames[i]} (JS index: ${i}, Routine index: ${routineDayIndex})`); // Verify day names/indices
+        console.log("4. Week routine data:", routine[currentDisplayWeek]); // Check if routine[week] is undefined
+        console.log("5. Day data:", dayData); // Crucial: check if this is null for all days
+        console.log("6. Status:", statusText, statusClass); // See what status is being calculated
+        
         const weekRoutineData = routine[currentDisplayWeek];
         const dayData = weekRoutineData && weekRoutineData.days ? weekRoutineData.days[routineDayIndex] : null;
 
